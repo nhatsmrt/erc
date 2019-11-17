@@ -38,9 +38,9 @@ class ERCData(Dataset):
                     self.labels.append(df_labels.loc[df_labels["File"] == filename, "Label"].values.item())
 
     def __getitem__(self, i: int):
-        input_audio = self.transform(self.data[i])[0, :, :self.max_length]
+        input_audio = self.transform(self.data[i])[:, :, :self.max_length]
         if input_audio.shape[1] < self.max_length:
-            input_audio = torch.cat([input_audio, torch.zeros((40, self.max_length - input_audio.shape[1]))], dim=1)
+            input_audio = torch.cat([input_audio, torch.zeros((1, 40, self.max_length - input_audio.shape[1]))], dim=-1)
 
         if self.training:
             return input_audio, self.labels[i]

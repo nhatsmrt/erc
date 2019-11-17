@@ -1,5 +1,5 @@
 from torch import nn
-from nntoolbox.components import AveragePool
+from nntoolbox.vision.components import GlobalAveragePool
 
 __all__ = ['CNNModel']
 
@@ -7,12 +7,12 @@ __all__ = ['CNNModel']
 class CNNModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            nn.Conv1d(40, 64, 3),
+            nn.Conv2d(1, 64, 3),
             nn.ReLU(inplace=True),
-            nn.BatchNorm1d(num_features=64),
-            nn.Conv1d(64, 128, 3),
+            nn.BatchNorm2d(num_features=64),
+            nn.Conv2d(64, 128, 3),
             nn.ReLU(inplace=True),
-            nn.BatchNorm1d(num_features=128),
-            AveragePool(dim=2),
+            nn.BatchNorm2d(num_features=128),
+            GlobalAveragePool(),
             nn.Linear(128, 6)
         )
