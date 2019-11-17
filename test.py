@@ -8,7 +8,7 @@ from src.utils import ERCData
 from src.models import *
 
 
-batch_size = 32
+batch_size = 128
 
 train_val_dataset = ERCData("data/", True)
 train_size = int(0.8 * len(train_val_dataset))
