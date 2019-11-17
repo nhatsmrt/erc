@@ -10,7 +10,7 @@ __all__ = ['ERCData']
 
 
 class ERCData(Dataset):
-    def __init__(self, root: str, training: bool=True, max_length: int=40000):
+    def __init__(self, root: str, training: bool=True, max_length: int=30000):
         self.data = []
         self.transform = MFCC(sample_rate=16000)
         self.training = training
