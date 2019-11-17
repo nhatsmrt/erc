@@ -14,7 +14,6 @@ train_size = int(0.8 * len(train_val_dataset))
 val_size = len(train_val_dataset) - train_size
 train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_size])
 
-
 train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=32)
 
@@ -25,7 +24,7 @@ model = nn.Sequential(
     nn.ReLU(),
     nn.Conv1d(64, 128, 3),
     nn.ReLU(),
-    nn.Conv1d(128, 10, 3),
+    nn.Conv1d(128, 6, 3),
     AveragePool(dim=2)
 ).to(get_device())
 
