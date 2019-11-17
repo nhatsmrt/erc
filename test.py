@@ -34,6 +34,7 @@ callbacks = [
     ToDeviceCallback(),
     LossLogger(),
     ModelCheckpoint(learner=learner, filepath="weights/model.pt", monitor='accuracy', mode='max'),
+    Tensorboard()
 ]
 
 metrics = {
