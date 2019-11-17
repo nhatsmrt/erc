@@ -8,13 +8,15 @@ from src.utils import ERCData
 from src.models import *
 
 
+batch_size = 32
+
 train_val_dataset = ERCData("data/", True)
 train_size = int(0.8 * len(train_val_dataset))
 val_size = len(train_val_dataset) - train_size
 train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_size])
 
-train_loader = DataLoader(train_data, batch_size=128, shuffle=True)
-val_loader = DataLoader(val_data, batch_size=128)
+train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+val_loader = DataLoader(val_data, batch_size=batch_size)
 
 
 model = CNNModel()
