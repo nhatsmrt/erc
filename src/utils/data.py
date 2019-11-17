@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset
 from torchaudio import load_wav
-from torchaudio.transforms import MFCC
+from torchaudio.transforms import MFCC, Resample
 import os
 import torch
 import pandas as pd
@@ -10,12 +10,14 @@ __all__ = ['ERCData']
 
 
 class ERCData(Dataset):
-    def __init__(self, root: str, training: bool=True, max_length: int=30000):
+    def __init__(self, root: str, training: bool=True, frequency: int=16000, max_length: int=50000):
         self.data = []
-        self.transform = MFCC(sample_rate=16000)
+        self.transform = MFCC(sample_rate=frequency)
         self.training = training
         self.filenames = []
         self.max_length = max_length
+        if frequency != 160000:
+            self.resampler = Resample(orig_freq=16000, new_freq=frequency)
 
         if training:
             df_labels = pd.read_csv(root + "train_label.csv")
@@ -28,9 +30,8 @@ class ERCData(Dataset):
             if filename.endswith(".wav"):
                 self.filenames.append(filename)
                 input_audio, sample_rate = load_wav(root + filename)
-                # input_audio = self.transform(input_audio)[0, :, :max_length]
-                # if input_audio.shape[1] < max_length:
-                #     input_audio = torch.cat([input_audio, torch.zeros((40, max_length - input_audio.shape[1]))], dim=1)
+                if frequency != 160000:
+                    input_audio = self.resampler(input_audio)
 
                 self.data.append(input_audio)
                 if training:

@@ -20,12 +20,13 @@ val_loader = DataLoader(val_data, batch_size=32)
 
 model = nn.Sequential(
     # MFCC(sample_rate=16000),
-    nn.Conv1d(40, 64, 3),
+    nn.Conv1d(40, 64, 5),
     nn.ReLU(),
-    nn.Conv1d(64, 128, 3),
+    nn.Conv1d(64, 128, 5),
     nn.ReLU(),
-    nn.Conv1d(128, 6, 3),
-    AveragePool(dim=2)
+    nn.Conv1d(128, 256, 5),
+    AveragePool(dim=2),
+    nn.Linear(256, 6)
 ).to(get_device())
 
 learner = SupervisedLearner(train_loader, val_loader, model=model, criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters()))
