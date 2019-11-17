@@ -30,7 +30,7 @@ class ERCData(Dataset):
             if filename.endswith(".wav"):
                 self.filenames.append(filename)
                 input_audio, sample_rate = load_wav(root + filename)
-                if frequency != 160000:
+                if frequency != 16000:
                     input_audio = self.resampler(input_audio)
 
                 self.data.append(input_audio)
@@ -39,6 +39,8 @@ class ERCData(Dataset):
 
     def __getitem__(self, i: int):
         input_audio = self.transform(self.data[i])[:, :, :self.max_length]
+        # print(input_audio.shape[-1])
+        # print(self.data[i])
         if input_audio.shape[1] < self.max_length:
             input_audio = torch.cat([input_audio, torch.zeros((1, 40, self.max_length - input_audio.shape[-1]))], dim=-1)
 

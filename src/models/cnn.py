@@ -1,5 +1,5 @@
 from torch import nn
-from nntoolbox.vision.components import GlobalAveragePool, ConvolutionalLayer, ResidualBlockPreActivation
+from nntoolbox.vision.components import GlobalAveragePool, ConvolutionalLayer, ResidualBlockPreActivation, Flatten
 
 __all__ = ['CNNModel']
 
@@ -12,5 +12,8 @@ class CNNModel(nn.Sequential):
             ConvolutionalLayer(16, 64, 3, stride=2),
             ResidualBlockPreActivation(64),
             GlobalAveragePool(),
-            nn.Linear(64, 6)
+            nn.Linear(64, 6),
+            # nn.AdaptiveAvgPool2d(4),
+            # Flatten(),
+            # nn.Linear(256, 6)
         )
