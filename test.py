@@ -4,6 +4,7 @@ from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
 from nntoolbox.components import AveragePool
+from nntoolbox.utils import get_device
 from torch.optim import Adam
 from src.utils import ERCData
 
@@ -26,7 +27,7 @@ model = nn.Sequential(
     nn.ReLU(),
     nn.Conv1d(128, 10, 3),
     AveragePool(dim=2)
-)
+).to(get_device())
 
 learner = SupervisedLearner(train_loader, val_loader, model=model, criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters()))
 callbacks = [
