@@ -7,6 +7,7 @@ from nntoolbox.components import AveragePool
 from nntoolbox.utils import get_device
 from torch.optim import Adam
 from src.utils import ERCData
+from src.models import *
 
 
 train_val_dataset = ERCData("data/", True)
@@ -18,18 +19,13 @@ train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=32)
 
 
-model = nn.Sequential(
-    # MFCC(sample_rate=16000),
-    nn.Conv1d(40, 64, 5),
-    nn.ReLU(),
-    nn.Conv1d(64, 128, 5),
-    nn.ReLU(),
-    # nn.Conv1d(128, 256, 5),
-    # nn.ReLU(),
-    AveragePool(dim=2),
-    nn.Linear(128, 6)
-).to(get_device())
+# class ResidualBlock1D(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#
 
+
+model = CNNModel()
 learner = SupervisedLearner(train_loader, val_loader, model=model, criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters()))
 callbacks = [
     ToDeviceCallback(),
