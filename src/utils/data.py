@@ -10,13 +10,13 @@ __all__ = ['ERCData']
 
 
 class ERCData(Dataset):
-    def __init__(self, root: str, training: bool=True, frequency: int=16000, max_length: int=512):
+    def __init__(self, root: str, training: bool=True, frequency: int=16000, max_length: int=400):
         self.data = []
         self.transform = MFCC(sample_rate=frequency)
         self.training = training
         self.filenames = []
         self.max_length = max_length
-        if frequency != 160000:
+        if frequency != 16000:
             self.resampler = Resample(orig_freq=16000, new_freq=frequency)
 
         if training:
