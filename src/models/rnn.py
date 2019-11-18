@@ -7,8 +7,10 @@ __all__ = ['RNNModel']
 class RNNModel(nn.Module):
     def __init__(self, hidden_size: int=128):
         super().__init__()
-        self.gru = nn.GRU(input_size=40, hidden_size=hidden_size, num_layers=2, dropout=0.5, bidirectional=True)
+        self.input_dropout = nn.Dropout(0.25)
+        self.gru = nn.GRU(input_size=40, hidden_size=hidden_size, num_layers=2, dropout=0.25, bidirectional=True)
         self.concat_pool = ConcatPool(concat_dim=-1, pool_dim=0)
+        self.op_dropout = nn.Dropout(0.25)
         self.op = nn.Linear(hidden_size * 6, 6)
 
 
@@ -19,7 +21,7 @@ class RNNModel(nn.Module):
         """
         input = input.squeeze(1).permute(2, 0, 1)
         output, _ = self.gru(input)
-        return self.op(self.concat_pool(output))
+        return self.op(self.op_dropout(self.concat_pool(output)))
 
 
 
