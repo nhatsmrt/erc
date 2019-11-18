@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader, random_split
 from torch import nn
-from torchaudio.transforms import MFCC
+from torchaudio.transforms import MFCC, MelSpectrogram
 from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
@@ -11,10 +11,12 @@ from src.models import *
 
 
 batch_size = 128
-transform = MFCC()
+frequency = 16000
+transform = MFCC(sample_rate=frequency)
+# transform = MelSpectrogram(sample_rate=frequency)
 
-train_val_dataset = ERCData("data/", True)
-train_size = int(0.9 * len(train_val_dataset))
+train_val_dataset = ERCData("data/", True, frequency=frequency, transform=transform)
+train_size = int(0.8 * len(train_val_dataset))
 val_size = len(train_val_dataset) - train_size
 train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_size])
 
@@ -26,7 +28,7 @@ learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=Adam(model.parameters()),
-    # mixup=True, mixup_alpha=0.2
+    mixup=True, mixup_alpha=0.2
 )
 # learner = SupervisedImageLearner(
 #     train_loader, val_loader, model=model,
