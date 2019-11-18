@@ -21,14 +21,14 @@ val_loader = DataLoader(val_data, batch_size=batch_size)
 
 
 model = CNNModel()
-# learner = SupervisedLearner(
-#     train_loader, val_loader, model=model,
-#     criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters())
-# )
-learner = SupervisedImageLearner(
+learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters())
 )
+# learner = SupervisedImageLearner(
+#     train_loader, val_loader, model=model,
+#     criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters())
+# )
 callbacks = [
     ToDeviceCallback(),
     LossLogger(),
