@@ -3,6 +3,7 @@ from torch import nn
 from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
+from nntoolbox.vision.learner import SupervisedImageLearner
 from torch.optim import Adam
 from src.utils import ERCData
 from src.models import *
@@ -19,8 +20,12 @@ train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
 
-model = RNNModel()
-learner = SupervisedLearner(
+model = CNNModel()
+# learner = SupervisedLearner(
+#     train_loader, val_loader, model=model,
+#     criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters())
+# )
+learner = SupervisedImageLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters())
 )
