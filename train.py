@@ -12,7 +12,7 @@ from src.models import *
 batch_size = 128
 
 train_val_dataset = ERCData("data/", True)
-train_size = int(0.9 * len(train_val_dataset))
+train_size = int(0.8 * len(train_val_dataset))
 val_size = len(train_val_dataset) - train_size
 train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_size])
 
@@ -22,7 +22,9 @@ val_loader = DataLoader(val_data, batch_size=batch_size)
 model = CNNModel()
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
-    criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters())
+    criterion=nn.CrossEntropyLoss(),
+    optimizer=Adam(model.parameters()),
+    # mixup=True, mixup_alpha=0.2
 )
 # learner = SupervisedImageLearner(
 #     train_loader, val_loader, model=model,
