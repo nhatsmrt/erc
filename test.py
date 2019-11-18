@@ -4,7 +4,6 @@ import torch
 import pandas as pd
 
 
-batch_size = 128
 test_dataset = ERCData("data/", False)
 # test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
