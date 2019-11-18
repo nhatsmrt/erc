@@ -1,47 +1,26 @@
-from torch.utils.data import DataLoader, random_split
-from torch import nn
-from nntoolbox.learner import SupervisedLearner
-from nntoolbox.callbacks import *
-from nntoolbox.metrics import *
-from torch.optim import Adam
 from src.utils import ERCData
 from src.models import *
+import torch
+import pandas as pd
 
 
 batch_size = 128
-
-train_val_dataset = ERCData("data/", True)
-train_size = int(0.8 * len(train_val_dataset))
-val_size = len(train_val_dataset) - train_size
-train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_size])
-
-train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(val_data, batch_size=batch_size)
+test_dataset = ERCData("data/", False)
+# test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 
 model = CNNModel()
-learner = SupervisedLearner(
-    train_loader, val_loader, model=model,
-    criterion=nn.CrossEntropyLoss(), optimizer=Adam(model.parameters())
-)
-callbacks = [
-    ToDeviceCallback(),
-    LossLogger(),
-    ModelCheckpoint(learner=learner, filepath="weights/model.pt", monitor='accuracy', mode='max'),
-    Tensorboard()
-]
-
-metrics = {
-    "accuracy": Accuracy(),
-    "loss": Loss()
-}
-
-final = learner.learn(
-    n_epoch=500,
-    callbacks=callbacks,
-    metrics=metrics,
-    final_metric='accuracy'
-)
-
-
-print(final)
+model.load_state_dict(torch.load('weights/model.pt', map_location=lambda storage, location: storage))
+model.eval()
+outputs = []
+for i in range(len(test_dataset)):
+    input = test_dataset[i].unsqueeze(0)
+    output = torch.argmax(model(input), dim=-1).item()
+    outputs.append(output)
+    # print(output)
+# print(outputs)
+df_submission = pd.DataFrame({"File": test_dataset.filenames, "Label": outputs})
+df_submission.to_csv("data/submission.csv", index=False)
+# df_submission.
+# print(df_submission)
+# print(df_submission[df_submission["File"] == "PAEP-000008"]["Label"].values)
