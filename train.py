@@ -1,23 +1,25 @@
 from torch.utils.data import DataLoader, random_split
 from torch import nn
 from torchaudio.transforms import MFCC, MelSpectrogram, Spectrogram
+from torchvision.transforms import Compose
 from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
 from nntoolbox.vision.learner import SupervisedImageLearner
 from nntoolbox.losses import SmoothedCrossEntropy
 from torch.optim import Adam
-from src.utils import ERCData, LogMelSpectrogram
+from src.utils import ERCData, LogMelSpectrogram, RandomlyCrop
 from src.models import *
 
 
 batch_size = 128
 frequency = 16000
-transform = MFCC(sample_rate=frequency)
+# transform = MFCC(sample_rate=frequency)
 # transform = MelSpectrogram(sample_rate=frequency)
 # transform = MFCC(sample_rate=frequency, log_mels=True)
 # transform = Spectrogram(normalized=True)
 # transform = LogMelSpectrogram(sample_rate=frequency)
+transform = Compose([RandomlyCrop(), MFCC(sample_rate=frequency)])
 
 
 train_val_dataset = ERCData("data/", True, frequency=frequency, transform=transform)
@@ -28,7 +30,7 @@ train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
-model = CNNModelV2()
+model = CNNModel()
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
