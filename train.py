@@ -7,7 +7,7 @@ from nntoolbox.metrics import *
 from nntoolbox.vision.learner import SupervisedImageLearner
 from nntoolbox.losses import SmoothedCrossEntropy
 from torch.optim import Adam
-from src.utils import ERCData
+from src.utils import ERCData, LogMelSpectrogram
 from src.models import *
 
 
@@ -16,7 +16,9 @@ frequency = 16000
 # transform = MFCC(sample_rate=frequency)
 # transform = MelSpectrogram(sample_rate=frequency)
 # transform = MFCC(sample_rate=frequency, log_mels=True)
-transform = Spectrogram(normalized=True)
+# transform = Spectrogram(normalized=True)
+transform = LogMelSpectrogram(sample_rate=frequency)
+
 
 train_val_dataset = ERCData("data/", True, frequency=frequency, transform=transform)
 train_size = int(0.8 * len(train_val_dataset))
@@ -32,7 +34,7 @@ learner = SupervisedLearner(
     criterion=nn.CrossEntropyLoss(),
     # criterion=SmoothedCrossEntropy(),
     optimizer=Adam(model.parameters()),
-    mixup=True, mixup_alpha=0.4
+    # mixup=True, mixup_alpha=0.4
 )
 # learner = SupervisedImageLearner(
 #     train_loader, val_loader, model=model,
