@@ -10,9 +10,16 @@ __all__ = ['ERCData']
 
 
 class ERCData(Dataset):
-    def __init__(self, root: str, training: bool=True, frequency: int=16000, max_length: int=280):
+    def __init__(
+            self, root: str, training: bool=True, frequency: int=16000,
+            max_length: int=280, transform=None
+    ):
         self.data = []
-        self.transform = MFCC(sample_rate=frequency)
+        if transform is None:
+            self.transform = MFCC(frequency)
+        else:
+            self.transform = transform
+
         self.training = training
         self.filenames = []
         self.max_length = max_length
