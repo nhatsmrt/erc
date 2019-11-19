@@ -6,7 +6,7 @@ import torch
 import pandas as pd
 
 
-__all__ = ['ERCData']
+__all__ = ['ERCData', 'ERCDataV2']
 
 
 class ERCData(Dataset):
@@ -68,3 +68,19 @@ class ERCData(Dataset):
 
     def __len__(self):
         return len(self.data)
+
+
+class ERCDataV2(ERCData):
+    def __getitem__(self, i: int):
+        input_audio = self.data[i]
+        input_audio = input_audio[:, :self.max_length]
+        if input_audio.shape[1] < self.max_length:
+            input_audio = torch.cat(
+                [input_audio, torch.zeros((1, self.max_length - input_audio.shape[-1]))],
+                dim=-1
+            )
+        input_audio = self.transform(input_audio)
+        if self.training:
+            return input_audio, self.labels[i]
+        else:
+            return input_audio

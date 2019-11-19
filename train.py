@@ -8,22 +8,25 @@ from nntoolbox.metrics import *
 from nntoolbox.vision.learner import SupervisedImageLearner
 from nntoolbox.losses import SmoothedCrossEntropy
 from torch.optim import Adam
-from src.utils import ERCData, LogMelSpectrogram, RandomlyCrop
+from src.utils import *
 from src.models import *
 
 
 batch_size = 128
 frequency = 16000
-max_length = 240
-# transform = MFCC(sample_rate=frequency)
+max_length = 60000
+
+
+transform = MFCC(sample_rate=frequency)
 # transform = MelSpectrogram(sample_rate=frequency)
 # transform = MFCC(sample_rate=frequency, log_mels=True)
 # transform = Spectrogram(normalized=True)
 # transform = LogMelSpectrogram(sample_rate=frequency)
-transform = Compose([RandomlyCrop(), MFCC(sample_rate=frequency)])
+# transform = Compose([RandomlyCrop(), MFCC(sample_rate=frequency)])
 
 
-train_val_dataset = ERCData("data/", True, frequency=frequency, transform=transform, max_length=max_length)
+# train_val_dataset = ERCData("data/", True, frequency=frequency, transform=transform, max_length=max_length)
+train_val_dataset = ERCDataV2("data/", True, frequency=frequency, transform=transform, max_length=max_length)
 train_size = int(0.8 * len(train_val_dataset))
 val_size = len(train_val_dataset) - train_size
 train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_size])

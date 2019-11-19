@@ -36,7 +36,7 @@ class RandomlyCropFraction(nn.Module):
         self.ratio = ratio
 
     def forward(self, audio: Tensor):
-        length = self.ratio * audio.shape[-1]
+        length = int(self.ratio * audio.shape[-1])
         start = np.random.choice(audio.shape[-1] - length)
-        return audio[:, start:start + self.length]
+        return audio[:, start:start + length]
 
