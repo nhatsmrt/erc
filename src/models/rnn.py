@@ -26,12 +26,12 @@ class SequenceConcatPool(nn.Module):
 class RNNModel(nn.Module):
     def __init__(self, hidden_size: int=128):
         super().__init__()
-        self.input_dropout = nn.Dropout(0.25)
-        self.gru = nn.GRU(input_size=40, hidden_size=hidden_size, num_layers=2, dropout=0.25, bidirectional=True)
-        # self.pool = SequenceConcatPool()
-        self.pool = extract_last
-        self.op_dropout = nn.Dropout(0.25)
-        self.op = nn.Linear(hidden_size * 2, 6)
+        self.input_dropout = nn.Dropout(0.5)
+        self.gru = nn.GRU(input_size=40, hidden_size=hidden_size, num_layers=2, dropout=0.5, bidirectional=True)
+        self.pool = SequenceConcatPool()
+        # self.pool = extract_last
+        self.op_dropout = nn.Dropout(0.5)
+        self.op = nn.Linear(hidden_size * 6, 6)
 
     def forward(self, input: Tensor, lengths: Tensor) -> Tensor:
         """
