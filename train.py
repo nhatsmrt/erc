@@ -13,7 +13,7 @@ from src.models import *
 
 batch_size = 128
 frequency = 16000
-transform = MFCC(sample_rate=frequency)
+transform = MFCC(sample_rate=frequency, n_mfcc=12)
 # transform = MelSpectrogram(sample_rate=frequency)
 # transform = MFCC(sample_rate=frequency, log_mels=True)
 # transform = Spectrogram(normalized=True)
