@@ -12,8 +12,8 @@ from src.models import *
 
 batch_size = 128
 frequency = 16000
-transform = MFCC(sample_rate=frequency)
-# transform = MelSpectrogram(sample_rate=frequency)
+# transform = MFCC(sample_rate=frequency)
+transform = MelSpectrogram(sample_rate=frequency)
 
 train_val_dataset = ERCData("data/", True, frequency=frequency, transform=transform)
 train_size = int(0.8 * len(train_val_dataset))
@@ -28,7 +28,7 @@ learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=Adam(model.parameters()),
-    mixup=True, mixup_alpha=0.2
+    # mixup=True, mixup_alpha=0.2
 )
 # learner = SupervisedImageLearner(
 #     train_loader, val_loader, model=model,
