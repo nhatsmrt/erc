@@ -49,7 +49,9 @@ class ERCData(Dataset):
         # print(input_audio.shape[-1])
         # print(self.data[i])
         if input_audio.shape[1] < self.max_length:
-            input_audio = torch.cat([input_audio, torch.zeros((1, 40, self.max_length - input_audio.shape[-1]))], dim=-1)
+            input_audio = torch.cat(
+                [input_audio, torch.zeros((1, input_audio.shape[1], self.max_length - input_audio.shape[-1]))], dim=-1
+            )
 
         if self.training:
             return input_audio, self.labels[i]
