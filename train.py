@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader, random_split
 from torch import nn
-from torchaudio.transforms import MFCC, MelSpectrogram
+from torchaudio.transforms import MFCC, MelSpectrogram, Spectrogram
 from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
@@ -13,9 +13,10 @@ from src.models import *
 
 batch_size = 128
 frequency = 16000
-transform = MFCC(sample_rate=frequency)
+# transform = MFCC(sample_rate=frequency)
 # transform = MelSpectrogram(sample_rate=frequency)
 # transform = MFCC(sample_rate=frequency, log_mels=True)
+transform = Spectrogram(normalized=True)
 
 train_val_dataset = ERCData("data/", True, frequency=frequency, transform=transform)
 train_size = int(0.8 * len(train_val_dataset))
@@ -28,8 +29,8 @@ val_loader = DataLoader(val_data, batch_size=batch_size)
 model = DeepCNNModel()
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
-    # criterion=nn.CrossEntropyLoss(),
-    criterion=SmoothedCrossEntropy(),
+    criterion=nn.CrossEntropyLoss(),
+    # criterion=SmoothedCrossEntropy(),
     optimizer=Adam(model.parameters()),
     mixup=True, mixup_alpha=0.4
 )
