@@ -30,6 +30,7 @@ class DeepCNNModel(nn.Sequential):
             ResidualBlockPreActivation(128),
             nn.AdaptiveAvgPool2d((2, 4)),
             Flatten(),
+            nn.Dropout(p=0.5),
             nn.Linear(2 * 4 * 128, 128),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
