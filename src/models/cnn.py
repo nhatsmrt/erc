@@ -27,10 +27,7 @@ class CNNModelV2(nn.Sequential):
             nn.AdaptiveAvgPool2d((4, 16)),
             Flatten(),
             nn.Dropout(p=0.5),
-            nn.Linear(4 * 16 * 16, 128),
-            nn.ReLU(),
-            nn.Dropout(p=0.5),
-            nn.Linear(128, 6)
+            nn.Linear(4 * 16 * 16, 6),
         )
 
 
