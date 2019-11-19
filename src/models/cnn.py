@@ -1,7 +1,7 @@
 from torch import nn
 from nntoolbox.vision.components import *
 
-__all__ = ['CNNModel', 'DeepCNNModel']
+__all__ = ['CNNModel', 'CNNModelV2', 'DeepCNNModel']
 
 
 class CNNModel(nn.Sequential):
@@ -24,14 +24,13 @@ class CNNModelV2(nn.Sequential):
         super().__init__(
             ConvolutionalLayer(1, 16, 5),
             ResidualBlockPreActivation(16),
-            # ConvolutionalLayer(16, 64, 3, stride=2),
-            # ResidualBlockPreActivation(64),
-            # GlobalAveragePool(),
-            # nn.Linear(64, 6),
-            nn.AdaptiveAvgPool2d(4),
+            nn.AdaptiveAvgPool2d((4, 16)),
             Flatten(),
             nn.Dropout(p=0.5),
-            nn.Linear(256, 6)
+            nn.Linear(4 * 16 * 16, 128),
+            nn.ReLU(),
+            nn.Dropout(p=0.5),
+            nn.Linear(128, 6)
         )
 
 
