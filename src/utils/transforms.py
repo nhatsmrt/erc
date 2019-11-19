@@ -4,7 +4,7 @@ from torchaudio.transforms import MelSpectrogram
 import numpy as np
 
 
-__all__ = ['LogMelSpectrogram', 'RandomlyCrop']
+__all__ = ['LogMelSpectrogram', 'RandomlyCrop', 'RandomlyCropFraction']
 
 
 class LogMelSpectrogram(nn.Module):
@@ -27,5 +27,16 @@ class RandomlyCrop(nn.Module):
             return audio
 
         start = np.random.choice(audio.shape[-1] - self.length)
+        return audio[:, start:start + self.length]
+
+
+class RandomlyCropFraction(nn.Module):
+    def __init__(self, ratio: float=0.75):
+        super().__init__()
+        self.ratio = ratio
+
+    def forward(self, audio: Tensor):
+        length = self.ratio * audio.shape[-1]
+        start = np.random.choice(audio.shape[-1] - length)
         return audio[:, start:start + self.length]
 
