@@ -5,6 +5,7 @@ from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
 from nntoolbox.vision.learner import SupervisedImageLearner
+from nntoolbox.losses import SmoothedCrossEntropy
 from torch.optim import Adam
 from src.utils import ERCData
 from src.models import *
@@ -27,7 +28,8 @@ val_loader = DataLoader(val_data, batch_size=batch_size)
 model = DeepCNNModel()
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
-    criterion=nn.CrossEntropyLoss(),
+    # criterion=nn.CrossEntropyLoss(),
+    criterion=SmoothedCrossEntropy(),
     optimizer=Adam(model.parameters()),
     mixup=True, mixup_alpha=0.4
 )
