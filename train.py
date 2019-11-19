@@ -29,7 +29,7 @@ learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=Adam(model.parameters()),
-    # mixup=True, mixup_alpha=0.2
+    mixup=True, mixup_alpha=0.4
 )
 # learner = SupervisedImageLearner(
 #     train_loader, val_loader, model=model,
