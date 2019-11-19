@@ -13,11 +13,11 @@ from src.models import *
 
 batch_size = 128
 frequency = 16000
-# transform = MFCC(sample_rate=frequency)
+transform = MFCC(sample_rate=frequency)
 # transform = MelSpectrogram(sample_rate=frequency)
 # transform = MFCC(sample_rate=frequency, log_mels=True)
 # transform = Spectrogram(normalized=True)
-transform = LogMelSpectrogram(sample_rate=frequency)
+# transform = LogMelSpectrogram(sample_rate=frequency)
 
 
 train_val_dataset = ERCData("data/", True, frequency=frequency, transform=transform)
