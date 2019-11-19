@@ -52,8 +52,9 @@ class SupervisedSequenceLearner(Learner):
         return self._cb_handler.on_train_end()
 
     def learn_one_iter(self, inputs: Tensor, lengths: Tensor, labels: Tensor):
-        data = self._cb_handler.on_batch_begin({'inputs': inputs, 'labels': labels}, True)
+        data = self._cb_handler.on_batch_begin({'inputs': inputs, 'lengths': lengths, 'labels': labels}, True)
         inputs = data['inputs']
+        lengths = data['lengths']
         labels = data['labels']
 
         if self._mixup:
@@ -78,8 +79,9 @@ class SupervisedSequenceLearner(Learner):
         loss = 0
 
         for inputs, lengths, labels in self._val_data:
-            data = self._cb_handler.on_batch_begin({'inputs': inputs, 'labels': labels}, False)
+            data = self._cb_handler.on_batch_begin({'inputs': inputs, 'lengths': lengths, 'labels': labels}, False)
             inputs = data['inputs']
+            lengths = data['lengths']
             labels = data['labels']
 
             all_outputs.append(self.compute_outputs(inputs, lengths, False))
