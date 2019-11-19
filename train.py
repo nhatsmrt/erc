@@ -13,7 +13,7 @@ from src.models import *
 
 batch_size = 128
 frequency = 16000
-transform = MFCC(sample_rate=frequency, n_mfcc=12)
+transform = MFCC(sample_rate=frequency)
 # transform = MelSpectrogram(sample_rate=frequency)
 # transform = MFCC(sample_rate=frequency, log_mels=True)
 # transform = Spectrogram(normalized=True)
@@ -28,7 +28,7 @@ train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
-model = CNNModel()
+model = CNNModelV2()
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
