@@ -41,7 +41,7 @@ class RNNModel(nn.Module):
         input = input.squeeze(1).permute(2, 0, 1)  # (T, N, C)
         input_packed = pack_padded_sequence(input, lengths, enforce_sorted=False)
         output_packed, _ = self.gru(input_packed)
-        output, lengths = pad_packed_sequence(output_packed)
+        output, _ = pad_packed_sequence(output_packed)
 
         return self.op(self.op_dropout(self.pool(output, lengths)))
 
