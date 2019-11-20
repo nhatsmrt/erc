@@ -23,7 +23,7 @@ class MediumCNNModel(nn.Sequential):
     def __init__(self):
         super().__init__(
             ConvolutionalLayer(1, 8, 5),
-            ResidualBlockPreActivation(16),
+            ResidualBlockPreActivation(8),
             ConvolutionalLayer(8, 16, 3, stride=2),
             ResidualBlockPreActivation(16),
             nn.AdaptiveAvgPool2d(4),
