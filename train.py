@@ -27,7 +27,7 @@ transform = Compose(
     [
         MFCC(sample_rate=frequency),
         DiscardFirstCoeff(),
-        Normalize()
+        # Normalize()
     ]
 )
 
