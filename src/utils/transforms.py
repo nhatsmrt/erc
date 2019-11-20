@@ -156,7 +156,7 @@ class TimePad:
         self.length = length
 
     def __call__(self, spectrogram: Tensor) -> Tensor:
-        # spectrogram = spectrogram[:, :, :self.length]
+        spectrogram = spectrogram[:, :, :self.length]
         if spectrogram.shape[-1] < self.length:
             spectrogram = torch.cat(
                 [spectrogram, torch.zeros((1, spectrogram.shape[1], self.length - spectrogram.shape[-1]))],

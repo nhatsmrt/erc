@@ -23,12 +23,12 @@ transform_train = Compose(
         NormalizeAcrossTime(),
         FrequencyMasking(20),
         TimeMasking(32, p=0.20),
-        # TimePad(280)
-        TimePad(128),
-        ToPILImage(),
-        RandomCrop((128, 128)),
+        TimePad(280)
+        # TimePad(128),
+        # ToPILImage(),
+        # RandomCrop((128, 128)),
         # Resize((256, 256)),
-        ToTensor()
+        # ToTensor()
     ]
 )
 
@@ -36,12 +36,12 @@ transform_val = Compose(
     [
         DBScaleMelSpectrogram(sample_rate=frequency),
         NormalizeAcrossTime(),
-        # TimePad(280)
-        TimePad(128),
-        ToPILImage(),
-        RandomCrop((128, 128)),
+        TimePad(280)
+        # TimePad(128),
+        # ToPILImage(),
+        # RandomCrop((128, 128)),
         # Resize((256, 256)),
-        ToTensor()
+        # ToTensor()
     ]
 )
 
@@ -60,7 +60,7 @@ learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=Adam(model.parameters()),
-    # mixup=True, mixup_alpha=0.4
+    mixup=True, mixup_alpha=0.4
 )
 callbacks = [
     ToDeviceCallback(),
