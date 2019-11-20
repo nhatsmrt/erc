@@ -31,7 +31,6 @@ class DBScaleMelSpectrogram:
         return self.db_scale(self.mel_spec(input))
 
 
-
 class RandomlyCrop:
     def __init__(self, length: int=48000):
         self.length = length

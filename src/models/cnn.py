@@ -45,4 +45,5 @@ class DeepCNNModel(nn.Sequential):
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.5),
             nn.Linear(128, 6),
+            # FeedforwardBlock(in_channels=32, out_features=6, pool_output_size=4, hidden_layer_sizes=(128,), drop_p=0.5)
         )
