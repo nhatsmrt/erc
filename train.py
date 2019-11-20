@@ -26,8 +26,8 @@ frequency = 16000
 transform = Compose(
     [
         MFCC(sample_rate=frequency),
-        DiscardFirstCoeff(),
-        # Normalize()
+        # DiscardFirstCoeff(),
+        NormalizeAcrossTime()
     ]
 )
 

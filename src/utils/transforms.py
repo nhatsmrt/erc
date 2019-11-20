@@ -7,7 +7,7 @@ import numpy as np
 __all__ = [
     'LogMelSpectrogram', 'DBScaleMelSpectrogram',
     'RandomlyCrop', 'RandomlyCropFraction',
-    'FrequencyMasking', 'TimeMasking', 'Normalize',
+    'FrequencyMasking', 'TimeMasking', 'NormalizeAcrossTime',
     'DiscardFirstCoeff'
 ]
 
@@ -56,7 +56,7 @@ class RandomlyCropFraction:
 
 class FrequencyMasking:
     """
-    Randomly masked some frequency channels of the log mel frequency spectrogram
+    Randomly masked some frequency channels of the log mel frequency spectrogram. Apply after normalization.
 
     References:
 
@@ -83,7 +83,7 @@ class FrequencyMasking:
 
 class TimeMasking:
     """
-    Randomly masked an interval of time in the log mel frequency spectrogram.
+    Randomly masked an interval of time in the log mel frequency spectrogram. Apply after normalization.
 
     References:
 
@@ -110,16 +110,18 @@ class TimeMasking:
         return spectrogram
 
 
-class Normalize:
+class NormalizeAcrossTime:
     """
     Normalization across time dimension for each frequency/MFCC coefficient.
 
     References:
 
         Haytham Fayek. "Speech Processing for Machine Learning: Filter banks, Mel-Frequency Cepstral Coefficients (MFCCs)
-        and What's In-Between." https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html#fn:1
+        and What's In-Between." https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html
 
         https://musicinformationretrieval.com/mfcc.html
+
+        https://www.kaggle.com/c/freesound-audio-tagging/discussion/54082
     """
     def __call__(self, input):
         """
