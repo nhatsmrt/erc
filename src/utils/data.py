@@ -7,7 +7,7 @@ import pandas as pd
 from torch import randperm
 from torch._utils import _accumulate
 
-__all__ = ['ERCData', 'ERCDataV2']
+__all__ = ['ERCData', 'ERCDataV2', 'ERCDataRaw', 'TransformableSubset', 'random_split_before_transform']
 
 
 class ERCData(Dataset):
@@ -88,9 +88,10 @@ class ERCDataV2(ERCData):
 
 
 class ERCDataRaw(Dataset):
-    def __init__(self, root: str, training: bool=True, return_length: bool=False):
+    def __init__(self, root: str, training: bool=True, return_length: bool=False, transform=None):
         self.data = []
         self.return_length = return_length
+        self.transform = transform
 
         self.training = training
         self.filenames = []
@@ -112,10 +113,14 @@ class ERCDataRaw(Dataset):
                     self.labels.append(df_labels.loc[df_labels["File"] == filename, "Label"].values.item())
 
     def __getitem__(self, i: int):
+        input_audio = self.data[i]
+        if self.transform is not None:
+            input_audio = self.transform(input_audio)
+
         if self.training:
-            return self.data[i], self.labels[i]
+            return input_audio, self.labels[i]
         else:
-            return self.data[i]
+            return input_audio
 
     def __len__(self):
         return len(self.data)
@@ -143,14 +148,14 @@ class TransformableSubset(Dataset):
         return len(self.indices)
 
 
-def random_split_before_transform(dataset, lengths, transform):
+def random_split_before_transform(dataset, lengths, transforms):
     r"""
     Randomly split a dataset into non-overlapping new datasets of given lengths before transforming the input.
 
     Arguments:
         dataset (Dataset): Dataset to be split
         lengths (sequence): lengths of splits to be produced
-        transform: transformation to apply to data
+        transforms: transformation to apply to data
     """
     if sum(lengths) != len(dataset):
         raise ValueError("Sum of input lengths does not equal the length of the input dataset!")
@@ -158,6 +163,6 @@ def random_split_before_transform(dataset, lengths, transform):
     indices = randperm(sum(lengths)).tolist()
     return [
         TransformableSubset(dataset, indices[offset - length:offset], transform)
-        for offset, length in zip(_accumulate(lengths), lengths)
+        for offset, length, transform in zip(_accumulate(lengths), lengths, transforms)
     ]
 

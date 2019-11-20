@@ -8,7 +8,7 @@ __all__ = [
     'LogMelSpectrogram', 'DBScaleMelSpectrogram',
     'RandomlyCrop', 'RandomlyCropFraction',
     'FrequencyMasking', 'TimeMasking', 'NormalizeAcrossTime',
-    'DiscardFirstCoeff'
+    'DiscardFirstCoeff', 'TimePad'
 ]
 
 
