@@ -7,7 +7,6 @@ from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
 from nntoolbox.losses import SmoothedCrossEntropy
-from nntoolbox.callbacks import ReduceLROnPlateauCB
 from torch.optim import Adam
 from src.utils import *
 from src.models import *
@@ -68,7 +67,7 @@ callbacks = [
     ToDeviceCallback(),
     LossLogger(),
     ModelCheckpoint(learner=learner, filepath="weights/model.pt", monitor='accuracy', mode='max'),
-    ReduceLROnPlateauCB(optimizer=optimizer, patience=5),
+    ReduceLROnPlateauCB(optimizer=optimizer, patience=10),
     Tensorboard()
 ]
 
