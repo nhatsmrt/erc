@@ -7,6 +7,7 @@ from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
 from nntoolbox.losses import SmoothedCrossEntropy
+from nntoolbox.callbacks import ReduceLROnPlateauCB
 from torch.optim import Adam
 from src.utils import *
 from src.models import *
@@ -21,10 +22,8 @@ transform_train = Compose(
     [
         DBScaleMelSpectrogram(sample_rate=frequency),
         NormalizeAcrossTime(),
-        FrequencyMasking(15),
-        FrequencyMasking(15),
-        TimeMasking(70, p=0.20),
-        TimeMasking(70, p=0.20),
+        FrequencyMasking(20),
+        TimeMasking(32, p=0.20),
         TimePad(280)
         # TimePad(128),
         # ToPILImage(),
@@ -58,16 +57,18 @@ train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
 model = DeepCNNModel()
+optimizer = Adam(model.parameters())
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
-    optimizer=Adam(model.parameters()),
+    optimizer=optimizer,
     mixup=True, mixup_alpha=0.4
 )
 callbacks = [
     ToDeviceCallback(),
     LossLogger(),
     ModelCheckpoint(learner=learner, filepath="weights/model.pt", monitor='accuracy', mode='max'),
+    ReduceLROnPlateauCB(optimizer=optimizer, patience=5),
     Tensorboard()
 ]
 

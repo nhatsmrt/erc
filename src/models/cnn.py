@@ -39,9 +39,9 @@ class DeepCNNModel(nn.Sequential):
             ConvolutionalLayer(16, 32, 3, stride=2),
             ResidualBlockPreActivation(32),
 
-            ConvolutionalLayer(32, 64, 3, stride=2),
-            ResidualBlockPreActivation(64),
-            FeedforwardBlock(in_channels=64, out_features=6, pool_output_size=4, hidden_layer_sizes=(64,), drop_p=0.5)
+            # ConvolutionalLayer(32, 64, 3, stride=2),
+            # ResidualBlockPreActivation(64),
+            # FeedforwardBlock(in_channels=64, out_features=6, pool_output_size=4, hidden_layer_sizes=(64,), drop_p=0.5)
 
             # nn.AdaptiveAvgPool2d(4),
             # Flatten(),
@@ -52,5 +52,5 @@ class DeepCNNModel(nn.Sequential):
             # nn.Linear(128, 6),
 
 
-            # FeedforwardBlock(in_channels=32, out_features=6, pool_output_size=4, hidden_layer_sizes=(128,), drop_p=0.5)
+            FeedforwardBlock(in_channels=32, out_features=6, pool_output_size=4, hidden_layer_sizes=(128,), drop_p=0.5)
         )
