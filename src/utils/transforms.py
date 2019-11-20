@@ -130,7 +130,7 @@ class NormalizeAcrossTime:
         :param input: (C, freq, time)
         :return:
         """
-        return (input - input.mean(-1, keepdims=True)) / input.std(-1, keepdims=True)
+        return (input - input.mean(-1, keepdims=True)) / (input.std(-1, keepdims=True) + 1e-6)
 
 
 class DiscardFirstCoeff:
