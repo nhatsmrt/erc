@@ -25,7 +25,8 @@ frequency = 16000
 # transform = MFCC(sample_rate=frequency)
 transform = Compose(
     [
-        LogMelSpectrogram(sample_rate=frequency),
+        DBScaleMelSpectrogram(sample_rate=frequency),
+        # LogMelSpectrogram(sample_rate=frequency),
         # MFCC(sample_rate=frequency),
         # DiscardFirstCoeff(),
         NormalizeAcrossTime(),
