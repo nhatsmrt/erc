@@ -43,7 +43,7 @@ train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
-model = DeepCNNModel()
+model = MediumCNNModel()
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
