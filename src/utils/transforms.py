@@ -1,20 +1,35 @@
 import torch
-from torch import nn, Tensor
-from torchaudio.transforms import MelSpectrogram
+from torch import Tensor
+from torchaudio.transforms import MelSpectrogram, AmplitudeToDB
 import numpy as np
 
 
-__all__ = ['LogMelSpectrogram', 'RandomlyCrop', 'RandomlyCropFraction']
+__all__ = [
+    'LogMelSpectrogram', 'DBScaleMelSpectrogram',
+    'RandomlyCrop', 'RandomlyCropFraction',
+    'FrequencyMasking', 'TimeMasking', 'Normalize',
+    'DiscardFirstCoeff'
+]
 
 
-class LogMelSpectrogram(nn.Module):
+class LogMelSpectrogram:
     """MelSpectrogram in Log Scale"""
     def __init__(self, **kwargs):
-        super().__init__()
         self.mel_spec = MelSpectrogram(**kwargs)
 
-    def forward(self, input: Tensor) -> Tensor:
+    def __call__(self, input: Tensor) -> Tensor:
         return torch.log(self.mel_spec(input) + 1e-6)
+
+
+class DBScaleMelSpectrogram:
+    """MelSpectrogram in Log Scale"""
+    def __init__(self, **kwargs):
+        self.mel_spec = MelSpectrogram(**kwargs)
+        self.db_scale = AmplitudeToDB()
+
+    def forward(self, input: Tensor) -> Tensor:
+        return self.db_scale(self.mel_spec(input))
+
 
 
 class RandomlyCrop:
@@ -41,7 +56,7 @@ class RandomlyCropFraction:
 
 class FrequencyMasking:
     """
-    Randomly masked some frequency channels
+    Randomly masked some frequency channels of the log mel frequency spectrogram
 
     References:
 
@@ -55,7 +70,7 @@ class FrequencyMasking:
         """
         self.max_length_mask = max_length_mask
 
-    def __call__(self, spectrogram: Tensor):
+    def __call__(self, spectrogram: Tensor) -> Tensor:
         """
         :param spectrogram: data in mel spectrogram format. (C, F, L)
         :return: masked data.
@@ -68,7 +83,7 @@ class FrequencyMasking:
 
 class TimeMasking:
     """
-    Randomly masked an interval of time in the spectrogram.
+    Randomly masked an interval of time in the log mel frequency spectrogram.
 
     References:
 
@@ -84,7 +99,7 @@ class TimeMasking:
         self.max_length_mask = max_length_mask
         self.p = p
 
-    def __call__(self, spectrogram: Tensor):
+    def __call__(self, spectrogram: Tensor) -> Tensor:
         """
         :param spectrogram: data in mel spectrogram format. (C, F, L)
         :return: masked data.
@@ -95,3 +110,24 @@ class TimeMasking:
         return spectrogram
 
 
+class Normalize:
+    """
+    Normalization across time dimension for each frequency/MFCC coefficient.
+
+    References:
+
+        Haytham Fayek. "Speech Processing for Machine Learning: Filter banks, Mel-Frequency Cepstral Coefficients (MFCCs)
+        and What's In-Between." https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html#fn:1
+
+        https://musicinformationretrieval.com/mfcc.html
+    """
+    def __call__(self, input):
+        """
+        :param input: (C, freq, time)
+        :return:
+        """
+        return (input - input.mean(-1)) / input.std(-1)
+
+
+
+DiscardFirstCoeff = lambda mfcc: mfcc[:, 1:, :]

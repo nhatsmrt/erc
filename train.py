@@ -21,13 +21,15 @@ std = torch.from_numpy(np.load("data/std.npy"))
 # max_length = 60000
 
 
-class Normalize:
-    def __init__(self, mean, std):
-        self.mean, self.std = mean, std
-    def __call__(self, input):
-        return (input - self.mean) / self.std
-
-transform = Compose([MFCC(sample_rate=frequency), Normalize(mean, std)])
+# transform = Compose([MFCC(sample_rate=frequency), Normalize(mean, std)])
+# transform = MFCC(sample_rate=frequency)
+transform = Compose(
+    [
+        MFCC(sample_rate=frequency),
+        DiscardFirstCoeff(),
+        Normalize()
+    ]
+)
 
 train_val_dataset = ERCData("data/", True, frequency=frequency)
 train_size = int(0.8 * len(train_val_dataset))
