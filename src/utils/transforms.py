@@ -22,7 +22,7 @@ class LogMelSpectrogram:
 
 
 class DBScaleMelSpectrogram:
-    """MelSpectrogram in Log Scale"""
+    """MelSpectrogram in DB Scale"""
     def __init__(self, **kwargs):
         self.mel_spec = MelSpectrogram(**kwargs)
         self.db_scale = AmplitudeToDB()
@@ -126,8 +126,23 @@ class Normalize:
         :param input: (C, freq, time)
         :return:
         """
-        return (input - input.mean(-1)) / input.std(-1)
+        return (input - input.mean(-1, keepdims=True)) / input.std(-1, keepdims=True)
 
 
+class DiscardFirstCoeff:
+    """
+    Discard the first MFCC coefficient.
 
-DiscardFirstCoeff = lambda mfcc: mfcc[:, 1:, :]
+    References:
+
+        Haytham Fayek. "Speech Processing for Machine Learning: Filter banks, Mel-Frequency Cepstral Coefficients (MFCCs)
+        and What's In-Between." https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html#fn:1
+
+        https://musicinformationretrieval.com/mfcc.html
+    """
+    def __call__(self, mfcc: Tensor) -> Tensor:
+        """
+        :param mfcc: (C, freq, time)
+        :return:
+        """
+        return mfcc[:, 1:, :]

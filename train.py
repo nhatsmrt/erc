@@ -31,7 +31,7 @@ transform = Compose(
     ]
 )
 
-train_val_dataset = ERCData("data/", True, frequency=frequency)
+train_val_dataset = ERCData("data/", True, frequency=frequency, transform=transform)
 train_size = int(0.8 * len(train_val_dataset))
 val_size = len(train_val_dataset) - train_size
 train_data, val_data = random_split(train_val_dataset, lengths=[train_size, val_size])
