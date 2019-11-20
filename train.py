@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader, random_split
 from torch import nn
 from torchaudio.transforms import MFCC, MelSpectrogram, Spectrogram
-from torchvision.transforms import Compose, RandomCrop, Resize
+from torchvision.transforms import Compose, RandomCrop, Resize, ToPILImage, ToTensor
 from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
@@ -24,8 +24,10 @@ transform_train = Compose(
         FrequencyMasking(20),
         TimeMasking(32, p=0.20),
         # TimePad(280)
+        ToPILImage(),
         RandomCrop((128, 128)),
-        Resize((256, 256))
+        Resize((256, 256)),
+        ToTensor()
     ]
 )
 
@@ -34,8 +36,10 @@ transform_val = Compose(
         DBScaleMelSpectrogram(sample_rate=frequency),
         NormalizeAcrossTime(),
         # TimePad(280)
+        ToPILImage(),
         RandomCrop((128, 128)),
-        Resize((256, 256))
+        Resize((256, 256)),
+        ToTensor()
     ]
 )
 
