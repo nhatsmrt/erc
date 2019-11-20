@@ -27,7 +27,7 @@ class DBScaleMelSpectrogram:
         self.mel_spec = MelSpectrogram(**kwargs)
         self.db_scale = AmplitudeToDB()
 
-    def forward(self, input: Tensor) -> Tensor:
+    def __call__(self, input: Tensor) -> Tensor:
         return self.db_scale(self.mel_spec(input))
 
 
