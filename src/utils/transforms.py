@@ -109,7 +109,7 @@ class TimeMasking:
         mask_start = np.random.choice(spectrogram.shape[2] - mask_length)
         mask = torch.ones(size=spectrogram.shape, dtype=spectrogram.device, device=spectrogram.device)
         mask[:, :, mask_start:mask_start + mask_length] = 0
-        return spectrogram * spectrogram
+        return spectrogram * mask
 
 
 class NormalizeAcrossTime:
