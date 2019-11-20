@@ -16,8 +16,8 @@ import numpy as np
 batch_size = 128
 frequency = 16000
 
-mean = torch.from_numpy(np.load("data/mean.npy"))
-std = torch.from_numpy(np.load("data/std.npy"))
+# mean = torch.from_numpy(np.load("data/mean.npy"))
+# std = torch.from_numpy(np.load("data/std.npy"))
 # max_length = 60000
 
 
