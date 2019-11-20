@@ -150,3 +150,18 @@ class DiscardFirstCoeff:
         :return:
         """
         return mfcc[:, 1:, :]
+
+
+class TimePad:
+    def __init__(self, length):
+        self.length = length
+
+    def __call__(self, spectrogram: Tensor) -> Tensor:
+        spectrogram = spectrogram[:, :, :self.length]
+        if spectrogram.shape[-1] < self.length:
+            spectrogram = torch.cat(
+                [spectrogram, torch.zeros((1, spectrogram.shape[1], self.length - spectrogram.shape[-1]))],
+                dim=-1
+            )
+
+        return spectrogram

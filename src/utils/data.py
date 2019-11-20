@@ -4,7 +4,8 @@ from torchaudio.transforms import MFCC, Resample
 import os
 import torch
 import pandas as pd
-
+from torch import randperm
+from torch._utils import _accumulate
 
 __all__ = ['ERCData', 'ERCDataV2']
 
@@ -49,7 +50,7 @@ class ERCData(Dataset):
         input_audio = self.transform(self.data[i])
         length = min(self.max_length, input_audio.shape[-1])
         input_audio = input_audio[:, :, :self.max_length]
-        if input_audio.shape[1] < self.max_length:
+        if input_audio.shape[-1] < self.max_length:
             input_audio = torch.cat(
                 [input_audio, torch.zeros((1, input_audio.shape[1], self.max_length - input_audio.shape[-1]))],
                 dim=-1
@@ -84,3 +85,79 @@ class ERCDataV2(ERCData):
             return input_audio, self.labels[i]
         else:
             return input_audio
+
+
+class ERCDataRaw(Dataset):
+    def __init__(self, root: str, training: bool=True, return_length: bool=False):
+        self.data = []
+        self.return_length = return_length
+
+        self.training = training
+        self.filenames = []
+
+        if training:
+            df_labels = pd.read_csv(root + "train_label.csv")
+            root = root + "Train/"
+            self.labels = []
+        else:
+            root = root + "Public_Test/"
+
+        for filename in os.listdir(root):
+            if filename.endswith(".wav"):
+                self.filenames.append(filename)
+                input_audio, sample_rate = load_wav(root + filename)
+
+                self.data.append(input_audio)
+                if training:
+                    self.labels.append(df_labels.loc[df_labels["File"] == filename, "Label"].values.item())
+
+    def __getitem__(self, i: int):
+        if self.training:
+            return self.data[i], self.labels[i]
+        else:
+            return self.data[i]
+
+    def __len__(self):
+        return len(self.data)
+
+
+class TransformableSubset(Dataset):
+    r"""
+    Subset of a dataset at specified indices.
+
+    Arguments:
+        dataset (Dataset): The whole Dataset
+        indices (sequence): Indices in the whole set selected for subset
+    """
+    def __init__(self, dataset, indices, transform):
+        self.dataset = dataset
+        self.indices = indices
+        self.transform = transform
+
+    def __getitem__(self, idx):
+        audio, label = self.dataset[self.indices[idx]]
+        audio = self.transform(audio)
+        return audio, label
+
+    def __len__(self):
+        return len(self.indices)
+
+
+def random_split_before_transform(dataset, lengths, transform):
+    r"""
+    Randomly split a dataset into non-overlapping new datasets of given lengths before transforming the input.
+
+    Arguments:
+        dataset (Dataset): Dataset to be split
+        lengths (sequence): lengths of splits to be produced
+        transform: transformation to apply to data
+    """
+    if sum(lengths) != len(dataset):
+        raise ValueError("Sum of input lengths does not equal the length of the input dataset!")
+
+    indices = randperm(sum(lengths)).tolist()
+    return [
+        TransformableSubset(dataset, indices[offset - length:offset], transform)
+        for offset, length in zip(_accumulate(lengths), lengths)
+    ]
+
