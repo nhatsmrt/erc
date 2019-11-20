@@ -50,6 +50,9 @@ class FrequencyMasking:
         https://arxiv.org/abs/1904.08779v2
     """
     def __init__(self, max_length_mask: int):
+        """
+        :param max_length_mask: maximum length of mask
+        """
         self.max_length_mask = max_length_mask
 
     def __call__(self, spectrogram: Tensor):
@@ -74,6 +77,10 @@ class TimeMasking:
         https://arxiv.org/abs/1904.08779v2
     """
     def __init__(self, max_length_mask: int, p: float=1.0):
+        """
+        :param max_length_mask: maximum length of mask
+        :param p: fraction of length (in time) of spectrogram as an upper bound for the length of mask
+        """
         self.max_length_mask = max_length_mask
         self.p = p
 
