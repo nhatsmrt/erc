@@ -17,12 +17,11 @@ class LogMelSpectrogram(nn.Module):
         return torch.log(self.mel_spec(input) + 1e-6)
 
 
-class RandomlyCrop(nn.Module):
+class RandomlyCrop:
     def __init__(self, length: int=48000):
-        super().__init__()
         self.length = length
 
-    def forward(self, audio: Tensor):
+    def __call__(self, audio: Tensor):
         if audio.shape[-1] < self.length:
             return audio
 
@@ -30,13 +29,62 @@ class RandomlyCrop(nn.Module):
         return audio[:, start:start + self.length]
 
 
-class RandomlyCropFraction(nn.Module):
+class RandomlyCropFraction:
     def __init__(self, ratio: float=0.75):
-        super().__init__()
         self.ratio = ratio
 
-    def forward(self, audio: Tensor):
+    def __call__(self, audio: Tensor):
         length = int(self.ratio * audio.shape[-1])
         start = np.random.choice(audio.shape[-1] - length)
         return audio[:, start:start + length]
+
+
+class FrequencyMasking:
+    """
+    Randomly masked some frequency channels
+
+    References:
+
+        Daniel S. Park, William Chan, Yu Zhang, Chung-Cheng Chiu, Barret Zoph, Ekin D. Cubuk, Quoc V. Le.
+        "SpecAugment: A Simple Data Augmentation Method for Automatic Speech Recognition."
+        https://arxiv.org/abs/1904.08779v2
+    """
+    def __init__(self, max_length_mask: int):
+        self.max_length_mask = max_length_mask
+
+    def __call__(self, spectrogram: Tensor):
+        """
+        :param spectrogram: data in mel spectrogram format. (C, F, L)
+        :return: masked data.
+        """
+        mask_length = np.random.choice(self.max_length_mask)
+        mask_start = np.random.choice(spectrogram.shape[1] - mask_length)
+        spectrogram[:, mask_start:mask_start + mask_length, :] = 0
+        return spectrogram
+
+
+class TimeMasking:
+    """
+    Randomly masked an interval of time in the spectrogram.
+
+    References:
+
+        Daniel S. Park, William Chan, Yu Zhang, Chung-Cheng Chiu, Barret Zoph, Ekin D. Cubuk, Quoc V. Le.
+        "SpecAugment: A Simple Data Augmentation Method for Automatic Speech Recognition."
+        https://arxiv.org/abs/1904.08779v2
+    """
+    def __init__(self, max_length_mask: int, p: float=1.0):
+        self.max_length_mask = max_length_mask
+        self.p = p
+
+    def __call__(self, spectrogram: Tensor):
+        """
+        :param spectrogram: data in mel spectrogram format. (C, F, L)
+        :return: masked data.
+        """
+        mask_length = min(np.random.choice(self.max_length_mask), int(spectrogram.shape[2] * self.p))
+        mask_start = np.random.choice(spectrogram.shape[2] - mask_length)
+        spectrogram[:, :, mask_start:mask_start + mask_length] = 0
+        return spectrogram
+
 

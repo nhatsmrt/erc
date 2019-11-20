@@ -24,10 +24,10 @@ class CNNModelV2(nn.Sequential):
         super().__init__(
             ConvolutionalLayer(1, 16, 5),
             ResidualBlockPreActivation(16),
-            nn.AdaptiveAvgPool2d((4, 16)),
+            nn.AdaptiveAvgPool2d(4),
             Flatten(),
             nn.Dropout(p=0.5),
-            nn.Linear(4 * 16 * 16, 6),
+            nn.Linear(256, 6),
         )
 
 
