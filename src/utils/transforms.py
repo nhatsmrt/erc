@@ -77,8 +77,9 @@ class FrequencyMasking:
         """
         mask_length = np.random.choice(self.max_length_mask)
         mask_start = np.random.choice(spectrogram.shape[1] - mask_length)
-        spectrogram[:, mask_start:mask_start + mask_length, :] = 0
-        return spectrogram
+        mask = torch.ones(size=spectrogram.shape, dtype=spectrogram.device, device=spectrogram.device)
+        mask[:, mask_start:mask_start + mask_length, :] = 0
+        return spectrogram * mask
 
 
 class TimeMasking:
@@ -106,8 +107,9 @@ class TimeMasking:
         """
         mask_length = min(np.random.choice(self.max_length_mask), int(spectrogram.shape[2] * self.p))
         mask_start = np.random.choice(spectrogram.shape[2] - mask_length)
-        spectrogram[:, :, mask_start:mask_start + mask_length] = 0
-        return spectrogram
+        mask = torch.ones(size=spectrogram.shape, dtype=spectrogram.device, device=spectrogram.device)
+        mask[:, :, mask_start:mask_start + mask_length] = 0
+        return spectrogram * spectrogram
 
 
 class NormalizeAcrossTime:
