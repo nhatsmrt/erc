@@ -30,8 +30,8 @@ transform = Compose(
         # MFCC(sample_rate=frequency),
         # DiscardFirstCoeff(),
         NormalizeAcrossTime(),
-        FrequencyMasking(24),
-        TimeMasking(32, p=0.25)
+        FrequencyMasking(20),
+        TimeMasking(32, p=0.20)
     ]
 )
 
