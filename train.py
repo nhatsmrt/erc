@@ -24,6 +24,7 @@ transform_train = Compose(
         FrequencyMasking(20),
         TimeMasking(32, p=0.20),
         # TimePad(280)
+        TimePad(128),
         ToPILImage(),
         RandomCrop((128, 128)),
         Resize((256, 256)),
@@ -36,6 +37,7 @@ transform_val = Compose(
         DBScaleMelSpectrogram(sample_rate=frequency),
         NormalizeAcrossTime(),
         # TimePad(280)
+        TimePad(128),
         ToPILImage(),
         RandomCrop((128, 128)),
         Resize((256, 256)),
