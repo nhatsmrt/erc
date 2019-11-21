@@ -49,9 +49,9 @@ class ResNet18(nn.Sequential):
         layers = [
             base.conv1, base.bn1, base.relu, base.maxpool,
             base.layer1, base.layer2, base.layer3, base.layer4,
-            FeedforwardBlock(
-                in_channels=512, out_features=6, pool_output_size=1,
-                hidden_layer_sizes=(128,), drop_p=0.5
-            )
+            nn.AdaptiveAvgPool2d(1),
+            Flatten(),
+            nn.Dropout(0.5),
+            nn.Linear(512, 6)
         ]
         super().__init__(*layers)
