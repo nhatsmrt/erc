@@ -58,7 +58,7 @@ train_data, val_data = random_split_before_transform(
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
-model = DeepCNNModel()
+model = MediumCNNModel()
 # model = ResNet18()
 optimizer = Adam(model.parameters(), lr=lr)
 learner = SupervisedLearner(
