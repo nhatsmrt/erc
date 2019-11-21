@@ -152,11 +152,13 @@ class DiscardFirstCoeff:
 
 
 class TimePad:
-    def __init__(self, length):
+    def __init__(self, length, exact: bool=True):
         self.length = length
+        self.exact = exact
 
     def __call__(self, spectrogram: Tensor) -> Tensor:
-        spectrogram = spectrogram[:, :, :self.length]
+        if self.exact:
+            spectrogram = spectrogram[:, :, :self.length]
         if spectrogram.shape[-1] < self.length:
             spectrogram = torch.cat(
                 [
