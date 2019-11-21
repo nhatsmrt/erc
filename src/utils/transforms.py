@@ -8,7 +8,7 @@ __all__ = [
     'LogMelSpectrogram', 'DBScaleMelSpectrogram',
     'RandomlyCrop', 'RandomlyCropFraction',
     'FrequencyMasking', 'TimeMasking', 'NormalizeAcrossTime',
-    'DiscardFirstCoeff', 'TimePad'
+    'DiscardFirstCoeff', 'TimePad', 'AugmentDelta'
 ]
 
 
@@ -159,8 +159,92 @@ class TimePad:
         spectrogram = spectrogram[:, :, :self.length]
         if spectrogram.shape[-1] < self.length:
             spectrogram = torch.cat(
-                [spectrogram, torch.zeros((1, spectrogram.shape[1], self.length - spectrogram.shape[-1]))],
+                [
+                    spectrogram,
+                    torch.zeros((spectrogram.shape[0], spectrogram.shape[1], self.length - spectrogram.shape[-1]))
+                ],
                 dim=-1
             )
 
         return spectrogram
+
+
+class AugmentDelta:
+    """
+    Augment the spectrogram with 1st and 2nd order deltas
+    """
+    def __call__(self, spectrogram: Tensor) -> Tensor:
+        delta = compute_deltas(spectrogram)
+        delta2 = compute_deltas(delta)
+        return torch.cat([spectrogram, delta, delta2], dim=0)
+
+
+#### DIRECTLY FROM TORCHAUDIO MASTER BRANCH
+def compute_deltas(specgram, win_length=5, mode="replicate"):
+    # type: (Tensor, int, str) -> Tensor
+    r"""Compute delta coefficients of a tensor, usually a spectrogram:
+    .. math::
+        d_t = \frac{\sum_{n=1}^{\text{N}} n (c_{t+n} - c_{t-n})}{2 \sum_{n=1}^{\text{N} n^2}
+    where :math:`d_t` is the deltas at time :math:`t`,
+    :math:`c_t` is the spectrogram coeffcients at time :math:`t`,
+    :math:`N` is (`win_length`-1)//2.
+    Args:
+        specgram (torch.Tensor): Tensor of audio of dimension (..., freq, time)
+        win_length (int): The window length used for computing delta
+        mode (str): Mode parameter passed to padding
+    Returns:
+        deltas (torch.Tensor): Tensor of audio of dimension (..., freq, time)
+    Example
+        >>> specgram = torch.randn(1, 40, 1000)
+        >>> delta = compute_deltas(specgram)
+        >>> delta2 = compute_deltas(delta)
+    """
+
+    # pack batch
+    shape = specgram.size()
+    specgram = specgram.reshape(1, -1, shape[-1])
+
+    assert win_length >= 3
+
+    n = (win_length - 1) // 2
+
+    # twice sum of integer squared
+    denom = n * (n + 1) * (2 * n + 1) / 3
+
+    specgram = torch.nn.functional.pad(specgram, (n, n), mode=mode)
+
+    kernel = (
+        torch
+        .arange(-n, n + 1, 1, device=specgram.device, dtype=specgram.dtype)
+        .repeat(specgram.shape[1], 1, 1)
+    )
+
+    output = torch.nn.functional.conv1d(specgram, kernel, groups=specgram.shape[1]) / denom
+
+    # unpack batch
+    output = output.reshape(shape)
+
+    return output
+
+
+class ComputeDeltas(torch.nn.Module):
+    r"""Compute delta coefficients of a tensor, usually a spectrogram.
+    See `torchaudio.functional.compute_deltas` for more details.
+    Args:
+        win_length (int): The window length used for computing delta.
+    """
+    __constants__ = ['win_length']
+
+    def __init__(self, win_length=5, mode="replicate"):
+        super(ComputeDeltas, self).__init__()
+        self.win_length = win_length
+        self.mode = mode
+
+    def forward(self, specgram):
+        r"""
+        Args:
+            specgram (torch.Tensor): Tensor of audio of dimension (channel, freq, time)
+        Returns:
+            deltas (torch.Tensor): Tensor of audio of dimension (channel, freq, time)
+        """
+        return compute_deltas(specgram, win_length=self.win_length, mode=self.mode)
