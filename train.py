@@ -14,7 +14,8 @@ import numpy as np
 
 batch_size = 128
 frequency = 16000
-# lr = 5e-4
+lr = 8e-4
+factor = 0.5
 
 
 transform_train = Compose(
@@ -29,7 +30,7 @@ transform_train = Compose(
         # RandomCrop((128, 128)),
         # Resize((256, 256)),
         # ToTensor(),
-        AugmentDelta()
+        # AugmentDelta()
     ]
 )
 
@@ -43,7 +44,7 @@ transform_val = Compose(
         # RandomCrop((128, 128)),
         # Resize((256, 256)),
         # ToTensor()
-        AugmentDelta()
+        # AugmentDelta()
     ]
 )
 
@@ -57,8 +58,8 @@ train_data, val_data = random_split_before_transform(
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
-# model = DeepCNNModel()
-model = ResNet18()
+model = DeepCNNModel()
+# model = ResNet18()
 optimizer = Adam(model.parameters())
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
@@ -70,7 +71,7 @@ callbacks = [
     ToDeviceCallback(),
     LossLogger(),
     ModelCheckpoint(learner=learner, filepath="weights/model.pt", monitor='accuracy', mode='max'),
-    ReduceLROnPlateauCB(optimizer=optimizer, patience=10),
+    ReduceLROnPlateauCB(optimizer=optimizer, patience=10, factor=factor),
     Tensorboard()
 ]
 
