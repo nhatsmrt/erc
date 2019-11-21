@@ -14,7 +14,8 @@ import numpy as np
 
 batch_size = 128
 frequency = 16000
-lr = 3e-4
+# lr = 3e-4
+lr = 1e-3
 factor = 0.5
 
 
