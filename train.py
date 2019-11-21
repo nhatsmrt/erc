@@ -14,7 +14,7 @@ import numpy as np
 
 batch_size = 128
 frequency = 16000
-lr = 8e-4
+lr = 3e-4
 factor = 0.5
 
 
@@ -24,13 +24,13 @@ transform_train = Compose(
         NormalizeAcrossTime(),
         FrequencyMasking(20),
         TimeMasking(32, p=0.20),
-        TimePad(280),
-        # TimePad(128),
-        # ToPILImage(),
-        # RandomCrop((128, 128)),
-        # Resize((256, 256)),
-        # ToTensor(),
-        # AugmentDelta()
+        # TimePad(280),
+        TimePad(128),
+        ToPILImage(),
+        RandomCrop((128, 128)),
+        Resize((256, 256)),
+        ToTensor(),
+        AugmentDelta()
     ]
 )
 
@@ -38,13 +38,12 @@ transform_val = Compose(
     [
         DBScaleMelSpectrogram(sample_rate=frequency),
         NormalizeAcrossTime(),
-        TimePad(280),
-        # TimePad(128),
-        # ToPILImage(),
-        # RandomCrop((128, 128)),
-        # Resize((256, 256)),
-        # ToTensor()
-        # AugmentDelta()
+        TimePad(128),
+        ToPILImage(),
+        RandomCrop((128, 128)),
+        Resize((256, 256)),
+        ToTensor(),
+        AugmentDelta()
     ]
 )
 
@@ -58,7 +57,7 @@ train_data, val_data = random_split_before_transform(
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
-model = MediumCNNModel()
+model = DeepCNNModel()
 # model = ResNet18()
 optimizer = Adam(model.parameters(), lr=lr)
 learner = SupervisedLearner(
