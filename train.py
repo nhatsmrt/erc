@@ -29,7 +29,7 @@ transform_train = Compose(
         TimePad(128, False),
         ToPILImage(),
         RandomCrop((128, 128)),
-        Resize((256, 256)),
+        # Resize((256, 256)),
         ToTensor(),
         AugmentDelta()
     ]
@@ -42,7 +42,7 @@ transform_val = Compose(
         TimePad(128, False),
         ToPILImage(),
         CenterCrop((128, 128)),
-        Resize((256, 256)),
+        # Resize((256, 256)),
         ToTensor(),
         AugmentDelta()
     ]
