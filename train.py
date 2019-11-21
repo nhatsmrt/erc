@@ -60,7 +60,7 @@ val_loader = DataLoader(val_data, batch_size=batch_size)
 
 model = DeepCNNModel()
 # model = ResNet18()
-optimizer = Adam(model.parameters())
+optimizer = Adam(model.parameters(), lr=lr)
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
