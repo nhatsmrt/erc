@@ -6,8 +6,10 @@ import torch
 import pandas as pd
 from torch import randperm
 from torch._utils import _accumulate
+import numpy as np
 
-__all__ = ['ERCData', 'ERCDataV2', 'ERCDataRaw', 'TransformableSubset', 'random_split_before_transform']
+__all__ = ['ERCData', 'ERCDataV2', 'ERCDataRaw', 'ERCAoTData',
+            'TransformableSubset', 'random_split_before_transform']
 
 
 class ERCData(Dataset):
@@ -125,6 +127,25 @@ class ERCDataRaw(Dataset):
     def __len__(self):
         return len(self.data)
 
+class ERCAoTData(ERCDataRaw):
+    def __init__(self, root: str, training: bool=True, return_length: bool=False, transform=None, flip_prob=0.5):
+        super().__init__(root, training, return_length, transform)
+        self.flip_prob = flip_prob
+
+    def __getitem__(self, i: int):
+        input_audio = self.data[i]
+
+        if self.transform is not None:
+            input_audio = self.transform(input_audio)
+
+        if self.training:
+            label = 0
+            if np.random.rand() < self.flip_prob:
+                input_audio = torch.flip(input_audio, dims=(-1, ))
+                label = 1
+            return input_audio, label
+        else:
+            return input_audio
 
 class TransformableSubset(Dataset):
     r"""

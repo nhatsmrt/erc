@@ -2,8 +2,18 @@ from torch import nn
 from nntoolbox.vision.components import *
 from torchvision.models import resnet18
 
-__all__ = ['CNNModel', 'MediumCNNModel', 'DeepCNNModel', 'ResNet18']
+__all__ = ['CNNModel', 'CNNAoTModel',
+            'MediumCNNModel', 'DeepCNNModel', 'ResNet18']
 
+class CNNAoTModel(nn.Sequential):
+    def __init__(self):
+        super().__init__(
+            ConvolutionalLayer(1, 16, 5),
+            ResidualBlockPreActivation(16),
+            nn.AdaptiveAvgPool2d(4),
+            Flatten(),
+            nn.Linear(256, 2)
+        )
 
 class CNNModel(nn.Sequential):
     def __init__(self):
