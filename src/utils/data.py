@@ -6,15 +6,10 @@ import torch
 import pandas as pd
 from torch import randperm
 from torch._utils import _accumulate
-<<<<<<< HEAD
-
-__all__ = ['ERCData', 'ERCDataV2', 'ERCDataRaw', 'TransformableSubset', 'random_split_before_transform']
-=======
 import numpy as np
 
 __all__ = ['ERCData', 'ERCDataV2', 'ERCDataRaw', 'ERCAoTData',
             'TransformableSubset', 'random_split_before_transform']
->>>>>>> master
 
 
 class ERCData(Dataset):
