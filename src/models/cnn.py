@@ -5,25 +5,42 @@ from torchvision.models import resnet18
 __all__ = ['CNNModel', 'CNNAoTModel',
             'MediumCNNModel', 'DeepCNNModel', 'ResNet18']
 
-class CNNAoTModel(nn.Sequential):
+class CNNFeatureExtractor(nn.Sequential):
     def __init__(self):
         super().__init__(
             ConvolutionalLayer(1, 16, 5),
             ResidualBlockPreActivation(16),
             nn.AdaptiveAvgPool2d(4),
-            Flatten(),
-            nn.Linear(256, 2)
+            Flatten()
         )
 
-class CNNModel(nn.Sequential):
-    def __init__(self):
-        super().__init__(
-            ConvolutionalLayer(1, 16, 5),
-            ResidualBlockPreActivation(16),
-            nn.AdaptiveAvgPool2d(4),
-            Flatten(),
-            nn.Linear(256, 6)
-        )
+class CNNAoTModel(nn.Module):
+    def __init__(self, pretrained_fe=None):
+        super().__init__()
+        self.extractor = CNNFeatureExtractor()
+        self.head = nn.Linear(256, 2)
+
+    def forward(self, x):
+        x = self.extractor(x)
+        x = self.head(x)
+        return x
+
+class CNNModel(nn.Module):
+    def __init__(self, pretrained_fe=None):
+        super().__init__()
+        self.extractor = CNNFeatureExtractor()
+        if pretrained_fe is not None:
+            state_dict = torch.load(pretrained_fe)
+            state_dict = { k.replace('extractor.', ''): v for k, v in state_dict.items() if 'extractor.' in k }
+            self.extractor.load_state_dict(state_dict)
+            for param in self.extractor.parameters():
+                param.requires_grad = False
+        self.head = nn.Linear(256, 6)
+
+    def forward(self, x):
+        x = self.extractor(x)
+        x = self.head(x)
+        return x
 
 
 class MediumCNNModel(nn.Sequential):
