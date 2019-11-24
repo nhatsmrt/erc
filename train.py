@@ -15,8 +15,8 @@ import numpy as np
 batch_size = 128
 frequency = 16000
 # lr = 3e-4
-lr = 3e-4
-factor = 0.5
+# lr = 3e-4
+factor = 0.1
 
 
 transform_train = Compose(
@@ -49,12 +49,12 @@ val_loader = DataLoader(val_data, batch_size=batch_size)
 
 model = DeepCNNModel()
 # model = ResNet18()
-optimizer = Adam(model.parameters(), lr=lr)
+optimizer = Adam(model.parameters())
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=optimizer,
-    # mixup=True, mixup_alpha=0.4
+    mixup=True, mixup_alpha=0.4
 )
 callbacks = [
     ToDeviceCallback(),
