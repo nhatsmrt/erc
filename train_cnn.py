@@ -12,14 +12,12 @@ from src.models import *
 
 batch_size = 128
 frequency = 16000
-# lr = 5e-4
-
+lr = 0.001
 
 transform_train = Compose(
     [
         MFCC(sample_rate=frequency),
-        TimePad(280),
-        RandomFlip(0.5)
+        TimePad(280)
     ]
 )
 
@@ -42,7 +40,7 @@ val_loader = DataLoader(val_data, batch_size=batch_size)
 
 
 model = CNNModel()
-optimizer = Adam(model.parameters())
+optimizer = Adam(model.parameters(), lr=lr)
 
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,

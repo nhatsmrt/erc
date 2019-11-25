@@ -8,8 +8,8 @@ __all__ = ['CNNModel', 'CNNAoTModel',
 class CNNFeatureExtractor(nn.Sequential):
     def __init__(self):
         super().__init__(
-            ConvolutionalLayer(1, 16, 5),
-            ResidualBlockPreActivation(16),
+            ConvolutionalLayer(1, 32, 5),
+            ResidualBlockPreActivation(32),
             nn.AdaptiveAvgPool2d(4),
             Flatten()
         )
@@ -35,7 +35,7 @@ class CNNModel(nn.Module):
             self.extractor.load_state_dict(state_dict)
             for param in self.extractor.parameters():
                 param.requires_grad = False
-        self.head = nn.Linear(256, 6)
+        self.head = nn.Linear(512, 6)
 
     def forward(self, x):
         x = self.extractor(x)
