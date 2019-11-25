@@ -72,9 +72,9 @@ class SEModel(nn.Sequential):
             SEResidualBlockPreActivation(16),
             ConvolutionalLayer(16, 32, 5, 2),
             SEResidualBlockPreActivation(32),
-            nn.AdaptiveAvgPool2d(4),
-            Flatten(),
-            nn.Linear(32 * 4 * 4, 2)
+            ConvolutionalLayer(32, 64, 5, 2),
+            SEResidualBlockPreActivation(64),
+            FeedforwardBlock(64, 6, 4, (128,))
         )
 
 
