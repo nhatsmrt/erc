@@ -21,6 +21,7 @@ class To1D:
         :param spectrogram: (1, freq_coeff, time)
         :return: (freq_coeff, time)
         """
+        # print(spectrogram.squeeze(0).shape)
         return spectrogram.squeeze(0)
 
 
@@ -55,6 +56,7 @@ transform_train = Compose(
         FrequencyMasking(20),
         TimeMasking(32, p=0.20),
         TimePad(280),
+        To1D()
     ]
 )
 
@@ -63,6 +65,7 @@ transform_val = Compose(
         DBScaleMelSpectrogram(sample_rate=frequency),
         NormalizeAcrossTime(),
         TimePad(280),
+        To1D()
     ]
 )
 
