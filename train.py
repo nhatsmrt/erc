@@ -12,16 +12,33 @@ from src.utils import *
 from src.models import *
 import numpy as np
 from nntoolbox.vision.components import *
+from nntoolbox.sequence.components import *
 
 
-class CNNModelBigFilter(nn.Sequential):
+class To1D:
+    def __call__(self, spectrogram: Tensor) -> Tensor:
+        """
+        :param spectrogram: (1, freq_coeff, time)
+        :return: (freq_coeff, time)
+        """
+        return spectrogram.squeeze(0)
+
+
+class Conv1DModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            ConvolutionalLayer(1, 16, kernel_size=128, stride=64),
-            ResidualBlockPreActivation(16),
-            nn.AdaptiveAvgPool2d(4),
+            nn.Conv1d(128, 64, kernel_size=5),
+            nn.ReLU(True),
+            nn.BatchNorm1d(64),
+            nn.Conv1d(64, 32, kernel_size=5),
+            nn.ReLU(True),
+            nn.BatchNorm1d(32),
+            nn.Conv1d(32, 16, kernel_size=5),
+            nn.ReLU(True),
+            nn.BatchNorm1d(16),
+            nn.AdaptiveAvgPool1d(4),
             Flatten(),
-            nn.Linear(256, 6)
+            nn.Linear(64, 6)
         )
 
 batch_size = 128
@@ -59,7 +76,7 @@ train_data, val_data = random_split_before_transform(
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
-model = CNNModelBigFilter()
+model = Conv1DModel()
 # model = ResNet18()
 optimizer = Adam(model.parameters())
 learner = SupervisedLearner(
