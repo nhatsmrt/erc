@@ -25,16 +25,21 @@ class To1D:
         return spectrogram.squeeze(0)
 
 
+class Convolutional1DLayer(nn.Sequential):
+    def __init__(self, in_channels, out_channels, kernel_size, padding: int=1, stride: int=1):
+        super().__init__(
+            nn.Conv1d(in_channels, out_channels, kernel_size=kernel_size, padding=padding, stride=stride),
+            nn.ReLU(True),
+            nn.BatchNorm1d(out_channels)
+        )
+
+
 class ResidualBlock1D(nn.Sequential):
     def __init__(self, in_channels: int):
         super().__init__()
         self.conv_path = nn.Sequential(
-            nn.Conv1d(in_channels, in_channels, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm1d(in_channels),
-            nn.Conv1d(in_channels, in_channels, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.BatchNorm1d(in_channels)
+            Convolutional1DLayer(in_channels, in_channels, 3, 1),
+            Convolutional1DLayer(in_channels, in_channels, 3, 1)
         )
 
     def forward(self, input):
@@ -44,9 +49,11 @@ class ResidualBlock1D(nn.Sequential):
 class Conv1DModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            nn.Conv1d(128, 16, kernel_size=5),
-            nn.ReLU(True),
-            nn.BatchNorm1d(16),
+            Convolutional1DLayer(128, 64, 5),
+            ResidualBlock1D(64),
+            Convolutional1DLayer(64, 32, 5, stride=2),
+            ResidualBlock1D(32),
+            Convolutional1DLayer(32, 16, 5, stride=2),
             ResidualBlock1D(16),
             nn.AdaptiveAvgPool1d(4),
             Flatten(),
