@@ -70,9 +70,9 @@ class SEModel(nn.Sequential):
         super().__init__(
             ConvolutionalLayer(1, 16, 5),
             SEResidualBlockPreActivation(16),
-            ConvolutionalLayer(16, 32, 5, 2),
+            ConvolutionalLayer(16, 32, 3, 2),
             SEResidualBlockPreActivation(32),
-            ConvolutionalLayer(32, 64, 5, 2),
+            ConvolutionalLayer(32, 64, 3, 2),
             SEResidualBlockPreActivation(64),
             FeedforwardBlock(64, 6, 4, (128,))
         )
