@@ -11,6 +11,18 @@ from torch.optim import Adam
 from src.utils import *
 from src.models import *
 import numpy as np
+from nntoolbox.vision.components import *
+
+
+class CNNModelBigFilter(nn.Sequential):
+    def __init__(self):
+        super().__init__(
+            ConvolutionalLayer(1, 16, kernel_size=128, stride=64),
+            ResidualBlockPreActivation(16),
+            nn.AdaptiveAvgPool2d(4),
+            Flatten(),
+            nn.Linear(256, 6)
+        )
 
 batch_size = 128
 frequency = 16000
@@ -47,7 +59,7 @@ train_data, val_data = random_split_before_transform(
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
-model = DeepCNNModel()
+model = CNNModelBigFilter()
 # model = ResNet18()
 optimizer = Adam(model.parameters())
 learner = SupervisedLearner(
