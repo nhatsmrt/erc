@@ -68,13 +68,13 @@ from nntoolbox.sequence.components import *
 class SEModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            ConvolutionalLayer(1, 16, 5),
+            ConvolutionalLayer(1, 8, 5),
+            SEResidualBlockPreActivation(8),
+            ConvolutionalLayer(8, 16, 3, stride=2),
             SEResidualBlockPreActivation(16),
-            ConvolutionalLayer(16, 32, 3, 2),
+            ConvolutionalLayer(16, 32, 3, stride=2),
             SEResidualBlockPreActivation(32),
-            ConvolutionalLayer(32, 64, 3, 2),
-            SEResidualBlockPreActivation(64),
-            FeedforwardBlock(64, 6, 4, (128,))
+            FeedforwardBlock(in_channels=32, out_features=6, pool_output_size=4, hidden_layer_sizes=(128,), drop_p=0.5)
         )
 
 
