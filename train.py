@@ -15,53 +15,69 @@ from nntoolbox.vision.components import *
 from nntoolbox.sequence.components import *
 
 
-class To1D:
-    def __call__(self, spectrogram: Tensor) -> Tensor:
-        """
-        :param spectrogram: (1, freq_coeff, time)
-        :return: (freq_coeff, time)
-        """
-        # print(spectrogram.squeeze(0).shape)
-        return spectrogram.squeeze(0)
+# class To1D:
+#     def __call__(self, spectrogram: Tensor) -> Tensor:
+#         """
+#         :param spectrogram: (1, freq_coeff, time)
+#         :return: (freq_coeff, time)
+#         """
+#         # print(spectrogram.squeeze(0).shape)
+#         return spectrogram.squeeze(0)
+#
+#
+# class Convolutional1DLayer(nn.Sequential):
+#     def __init__(self, in_channels, out_channels, kernel_size, padding: int=1, stride: int=1):
+#         super().__init__(
+#             nn.Conv1d(in_channels, out_channels, kernel_size=kernel_size, padding=padding, stride=stride),
+#             nn.ReLU(True),
+#             nn.BatchNorm1d(out_channels)
+#         )
+#
+#
+# class ResidualBlock1D(nn.Sequential):
+#     def __init__(self, in_channels: int):
+#         super().__init__()
+#         self.conv_path = nn.Sequential(
+#             Convolutional1DLayer(in_channels, in_channels, 3, 1),
+#             Convolutional1DLayer(in_channels, in_channels, 3, 1)
+#         )
+#
+#     def forward(self, input):
+#         return input + super().forward(input)
+#
+#
+# class Conv1DModel(nn.Sequential):
+#     def __init__(self):
+#         super().__init__(
+#             Convolutional1DLayer(128, 64, 5),
+#             ResidualBlock1D(64),
+#             Convolutional1DLayer(64, 32, 5, stride=2),
+#             ResidualBlock1D(32),
+#             Convolutional1DLayer(32, 16, 5, stride=2),
+#             ResidualBlock1D(16),
+#             nn.AdaptiveAvgPool1d(4),
+#             Flatten(),
+#             nn.Linear(64, 6)
+#         )
+#
+#     def forward(self, input):
+#         return super().forward(input)
 
 
-class Convolutional1DLayer(nn.Sequential):
-    def __init__(self, in_channels, out_channels, kernel_size, padding: int=1, stride: int=1):
-        super().__init__(
-            nn.Conv1d(in_channels, out_channels, kernel_size=kernel_size, padding=padding, stride=stride),
-            nn.ReLU(True),
-            nn.BatchNorm1d(out_channels)
-        )
 
-
-class ResidualBlock1D(nn.Sequential):
-    def __init__(self, in_channels: int):
-        super().__init__()
-        self.conv_path = nn.Sequential(
-            Convolutional1DLayer(in_channels, in_channels, 3, 1),
-            Convolutional1DLayer(in_channels, in_channels, 3, 1)
-        )
-
-    def forward(self, input):
-        return input + super().forward(input)
-
-
-class Conv1DModel(nn.Sequential):
+class SEModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            Convolutional1DLayer(128, 64, 5),
-            ResidualBlock1D(64),
-            Convolutional1DLayer(64, 32, 5, stride=2),
-            ResidualBlock1D(32),
-            Convolutional1DLayer(32, 16, 5, stride=2),
-            ResidualBlock1D(16),
-            nn.AdaptiveAvgPool1d(4),
+            ConvolutionalLayer(1, 16, 5),
+            SEResidualBlockPreActivation(16),
+            ConvolutionalLayer(16, 32, 5, 2),
+            SEResidualBlockPreActivation(32),
+            nn.AdaptiveAvgPool2d(4),
             Flatten(),
-            nn.Linear(64, 6)
+            nn.Linear(32 * 4 * 4, 2)
         )
 
-    def forward(self, input):
-        return super().forward(input)
+
 
 batch_size = 128
 frequency = 16000
@@ -77,7 +93,7 @@ transform_train = Compose(
         FrequencyMasking(20),
         TimeMasking(32, p=0.20),
         TimePad(280),
-        To1D()
+        # To1D()
     ]
 )
 
@@ -86,7 +102,7 @@ transform_val = Compose(
         DBScaleMelSpectrogram(sample_rate=frequency),
         NormalizeAcrossTime(),
         TimePad(280),
-        To1D()
+        # To1D()
     ]
 )
 
@@ -102,14 +118,14 @@ train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 #     print(image.shape)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
-model = Conv1DModel()
+model = SEModel()
 # model = ResNet18()
 optimizer = Adam(model.parameters())
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=optimizer,
-    # mixup=True, mixup_alpha=0.4
+    mixup=True, mixup_alpha=0.4
 )
 callbacks = [
     ToDeviceCallback(),
