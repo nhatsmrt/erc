@@ -16,6 +16,7 @@ lr = 0.001
 
 transform_train = Compose(
     [
+        RandomCropCenter(30000),
         MFCC(sample_rate=frequency),
         TimePad(280)
     ]
