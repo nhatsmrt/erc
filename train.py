@@ -25,18 +25,29 @@ class To1D:
         return spectrogram.squeeze(0)
 
 
+class ResidualBlock1D(nn.Sequential):
+    def __init__(self, in_channels: int):
+        super().__init__()
+        self.conv_path = nn.Sequential(
+            nn.Conv1d(in_channels, in_channels, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm1d(in_channels),
+            nn.Conv1d(in_channels, in_channels, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm1d(in_channels)
+        )
+
+    def forward(self, input):
+        return input + super().forward(input)
+
+
 class Conv1DModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            nn.Conv1d(128, 64, kernel_size=5),
-            nn.ReLU(True),
-            nn.BatchNorm1d(64),
-            nn.Conv1d(64, 32, kernel_size=5),
-            nn.ReLU(True),
-            nn.BatchNorm1d(32),
-            nn.Conv1d(32, 16, kernel_size=5),
+            nn.Conv1d(128, 16, kernel_size=5),
             nn.ReLU(True),
             nn.BatchNorm1d(16),
+            ResidualBlock1D(16),
             nn.AdaptiveAvgPool1d(4),
             Flatten(),
             nn.Linear(64, 6)
