@@ -42,6 +42,9 @@ class Conv1DModel(nn.Sequential):
             nn.Linear(64, 6)
         )
 
+    def forward(self, input):
+        return super().forward(input)
+
 batch_size = 128
 frequency = 16000
 # lr = 3e-4
@@ -77,6 +80,8 @@ train_data, val_data = random_split_before_transform(
 )
 
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+# for image, _ in train_loader:
+#     print(image.shape)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
 model = Conv1DModel()
@@ -86,7 +91,7 @@ learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=optimizer,
-    mixup=True, mixup_alpha=0.4
+    # mixup=True, mixup_alpha=0.4
 )
 callbacks = [
     ToDeviceCallback(),
