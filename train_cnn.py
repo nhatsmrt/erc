@@ -48,6 +48,3 @@ final = learner.learn(
     metrics=metrics,
     final_metric='accuracy'
 )
-
-
-print(final)
