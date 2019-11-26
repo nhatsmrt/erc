@@ -20,4 +20,4 @@ model.eval()
 
 
 emo = EmoRec(model, tta_transform=transform)
-emo.export_predictions(test_dataset, "data/submission_2.csv")
+emo.export_predictions(test_dataset, "data/submission_2_tta.csv")
