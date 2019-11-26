@@ -8,6 +8,9 @@ from numpy import ndarray
 import pandas as pd
 
 
+__all__ = ['EmoRec']
+
+
 class DummyTransform:
     def __call__(self, input): return input
 
