@@ -7,6 +7,7 @@ import numpy as np
 __all__ = [
     'LogMelSpectrogram', 'DBScaleMelSpectrogram',
     'RandomlyCrop', 'RandomlyCropFraction',
+    'RandomFlip', 'RandomCropCenter',
     'FrequencyMasking', 'TimeMasking', 'NormalizeAcrossTime',
     'DiscardFirstCoeff', 'TimePad', 'AugmentDelta'
 ]
@@ -150,6 +151,26 @@ class DiscardFirstCoeff:
         """
         return mfcc[:, 1:, :]
 
+
+class RandomFlip:
+    def __init__(self, prob: bool=0.5):
+        self.prob = prob
+
+    def __call__(self, spectrogram: Tensor) -> Tensor:
+        if np.random.rand() < self.prob:
+            spectrogram = torch.flip(spectrogram, dims=(-1, ))
+        return spectrogram
+
+class RandomCropCenter:
+    def __init__(self, length: int=48000):
+        self.length = length
+
+    def __call__(self, audio: Tensor):
+        if audio.shape[-1] < self.length:
+            return audio
+
+        start = np.random.randint(self.length // 2, audio.shape[-1] - self.length // 2 )
+        return audio[:, start - self.length // 2 : start + self.length]
 
 class TimePad:
     def __init__(self, length, exact: bool=True, pad: str='center'):

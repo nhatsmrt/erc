@@ -6,8 +6,9 @@ from torchvision.transforms import Compose, RandomCrop, ToPILImage, ToTensor
 from src.inference import EmoRec
 
 frequency = 16000
-transform_val = Compose(
+transform = Compose(
     [
+        RandomCropCenter(30000),
         MFCC(sample_rate=frequency),
         TimePad(280)
     ]
@@ -18,5 +19,5 @@ model.load_state_dict(torch.load('weights/model_CNN_small.pt', map_location=lamb
 model.eval()
 
 
-emo = EmoRec(model, tta_transform=transform_val)
+emo = EmoRec(model, tta_transform=transform)
 emo.export_predictions(test_dataset, "data/submission_CNN_3.csv")

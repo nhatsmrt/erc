@@ -29,7 +29,7 @@ transform_val = Compose(
     ]
 )
 
-train_val_dataset = ERCDataRaw("data/", True)
+train_val_dataset = ERCAoTData("data/", True)
 train_size = int(0.8 * len(train_val_dataset))
 val_size = len(train_val_dataset) - train_size
 train_data, val_data = random_split_before_transform(
@@ -40,7 +40,7 @@ train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
 
-model = CNNModel()
+model = CNNAoTModel()
 optimizer = Adam(model.parameters())
 
 learner = SupervisedLearner(
@@ -51,7 +51,7 @@ learner = SupervisedLearner(
 callbacks = [
     ToDeviceCallback(),
     LossLogger(),
-    ModelCheckpoint(learner=learner, filepath="weights/model.pt", monitor='accuracy', mode='max'),
+    ModelCheckpoint(learner=learner, filepath="weights/model_aot.pt", monitor='accuracy', mode='max'),
     ReduceLROnPlateauCB(optimizer, patience=7),
     Tensorboard()
 ]
