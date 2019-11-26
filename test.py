@@ -18,6 +18,5 @@ model.load_state_dict(torch.load('weights/model_CNN_small.pt', map_location=lamb
 model.eval()
 
 
-
 emo = EmoRec(model, tta_transform=transform_val)
 emo.export_predictions(test_dataset, "data/submission_CNN_3.csv")
