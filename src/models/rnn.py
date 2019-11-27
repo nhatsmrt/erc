@@ -47,7 +47,7 @@ class RNNModel(nn.Module):
 
 
 class RNNModelV2(nn.Module):
-    def __init__(self, window_length: int=128, n_coeff: int=40, hop: int=64, hidden_size: int=128, num_layers: int=2):
+    def __init__(self, window_length: int=40, n_coeff: int=40, hop: int=20, hidden_size: int=128, num_layers: int=2):
         super().__init__()
         # self.input_dropout = nn.Dropout(0.5)
         self.gru = nn.GRU(
