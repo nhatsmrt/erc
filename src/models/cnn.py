@@ -57,7 +57,10 @@ class MediumCNNModel(nn.Sequential):
             ResidualBlockPreActivation(8),
             ConvolutionalLayer(8, 16, 3, stride=2),
             ResidualBlockPreActivation(16),
-            FeedforwardBlock(in_channels=16, out_features=6, pool_output_size=4, hidden_layer_sizes=(128,), drop_p=0.5)
+            nn.AdaptiveAvgPool2d(4),
+            Flatten(),
+            nn.Dropout(),
+            nn.Linear(256, 6)
         )
 
 

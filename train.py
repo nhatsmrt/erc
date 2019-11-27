@@ -17,14 +17,14 @@ lr = 0.001
 transform_train = Compose(
     [
         RandomCropCenter(30000),
-        MFCC(sample_rate=frequency, n_mfcc=30),
+        MFCC(sample_rate=frequency),
         TimePad(280)
     ]
 )
 
 transform_val = Compose(
     [
-        MFCC(sample_rate=frequency, n_mfcc=30),
+        MFCC(sample_rate=frequency),
         TimePad(280)
     ]
 )
@@ -40,7 +40,7 @@ train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
 
-model = CNNModel()
+model = MediumCNNModel()
 optimizer = Adam(model.parameters(), lr=lr)
 
 learner = SupervisedLearner(
