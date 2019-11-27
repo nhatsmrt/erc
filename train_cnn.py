@@ -24,7 +24,7 @@ transform_train = Compose(
 
 transform_val = Compose(
     [
-        MFCC(sample_rate=frequency),
+        MFCC(sample_rate=frequency, n_mfcc=30),
         TimePad(216)
     ]
 )
@@ -48,7 +48,9 @@ for i in range(5):
     learner = SupervisedLearner(
         train_loader, val_loader, model=model,
         criterion=nn.CrossEntropyLoss(),
-        optimizer=optimizer
+        optimizer=optimizer,
+        mixup=True,
+        mixup_alpha=0.1
     )
     callbacks = [
         ToDeviceCallback(),
@@ -64,7 +66,7 @@ for i in range(5):
     }
 
     final = learner.learn(
-        n_epoch=75,
+        n_epoch=100,
         callbacks=callbacks,
         metrics=metrics,
         final_metric='accuracy'

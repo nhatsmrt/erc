@@ -5,23 +5,45 @@ from torchvision.models import resnet18
 __all__ = ['CNNModel', 'CNNAoTModel',
             'MediumCNNModel', 'DeepCNNModel', 'ResNet18']
 
+class Block(nn.Sequential):
+    def __init__(self, in_channels, out_features, kernel_size, padding, pool_size, drop_p):
+        super().__init__(
+            nn.Conv2d(in_channels, out_features, kernel_size, padding=padding),
+            nn.BatchNorm2d(out_features),
+            nn.ReLU(),
+            nn.MaxPool2d(pool_size),
+            nn.Dropout(drop_p)
+        )
+
 class CNNFeatureExtractor2(nn.Sequential):
     def __init__(self):
         super().__init__(
-            nn.Conv2d(1, 32, (4, 10)),
+            nn.Conv2d(1, 32, (4, 10), padding=(2,5)),
             nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2),
             nn.Dropout(0.2),
 
-            nn.Conv2d(32, 32, (4, 10)),
+            nn.Conv2d(32, 32, (4, 10), padding=(2,5)),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Dropout(0.2),
+
+            nn.Conv2d(32, 32, (4, 10), padding=(2,5)),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Dropout(0.2),
+
+            nn.Conv2d(32, 32, (4, 10), padding=(2,5)),
             nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2),
             nn.Dropout(0.2),
 
             Flatten(),
-            nn.Linear(7520, 256),
+            nn.Linear(896, 256),
 
             nn.Dropout(0.2),
             nn.BatchNorm1d(256),
@@ -64,11 +86,7 @@ class CNNModel(nn.Module):
         self.head = nn.Linear(256, 6)
 
     def forward(self, x):
-        try:
-            x = self.extractor(x)
-        except Exception as e:
-            print(x.shape)
-            print(e)
+        x = self.extractor(x)
         x = self.head(x)
         return x
 
