@@ -89,7 +89,9 @@ class DeeperCNNModel(nn.Sequential):
             ResidualBlockPreActivation(16),
             ConvolutionalLayer(16, 32, 3, stride=2),
             SEResidualBlockPreActivation(32),
-            FeedforwardBlock(32, 6, 4, (128,), normalization=nn.Identity)
+            ConvolutionalLayer(32, 64, 3, stride=2),
+            SEResidualBlockPreActivation(64),
+            FeedforwardBlock(64, 6, 4, (128,), normalization=nn.Identity)
         )
 
 
