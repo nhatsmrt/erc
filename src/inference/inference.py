@@ -44,7 +44,7 @@ class EmoRec:
                 outputs = outputs.argmax(0, keepdim=True)
         else:
             if return_prob:
-                outputs = self.softmax(self._model(self.transform_main(image).unsqueeze(0)))
+                outputs = self._softmax(self._model(self.transform_main(image).unsqueeze(0)))
             else:
                 outputs = self._model(self.transform_main(image).unsqueeze(0)).argmax(1)
 
