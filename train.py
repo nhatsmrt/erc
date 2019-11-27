@@ -18,6 +18,7 @@ transform_train = Compose(
     [
         RandomCropCenter(30000),
         MFCC(sample_rate=frequency),
+        TimeMasking(max_length_mask=20),
         TimePad(280)
     ]
 )
@@ -46,7 +47,8 @@ optimizer = Adam(model.parameters(), lr=lr)
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
-    optimizer=optimizer
+    optimizer=optimizer,
+    # mixup=True, mixup_alpha=0.1
 )
 callbacks = [
     ToDeviceCallback(),
