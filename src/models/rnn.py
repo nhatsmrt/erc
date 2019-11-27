@@ -1,6 +1,7 @@
 from torch import nn, Tensor
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from nntoolbox.sequence.utils import extract_last
+from nntoolbox.sequence.components import *
 import torch
 
 __all__ = ['RNNModel', 'RNNModelV2']
@@ -47,7 +48,7 @@ class RNNModel(nn.Module):
 
 
 class RNNModelV2(nn.Module):
-    def __init__(self, window_length: int=40, n_coeff: int=40, hop: int=20, hidden_size: int=128, num_layers: int=2):
+    def __init__(self, window_length: int=10, n_coeff: int=40, hop: int=5, hidden_size: int=128, num_layers: int=2):
         super().__init__()
         # self.input_dropout = nn.Dropout(0.5)
         self.gru = nn.GRU(
@@ -60,6 +61,7 @@ class RNNModelV2(nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.window_length, self.hop, self.n_coeff = window_length, hop, n_coeff
+        # self.attention = AdditiveAttention()
 
     def forward(self, input: Tensor) -> Tensor:
         """
