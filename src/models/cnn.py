@@ -4,7 +4,7 @@ from torchvision.models import resnet18
 
 __all__ = [
     'CNNModel', 'CNNAoTModel', 'MediumCNNModel',
-    'DeepCNNModel', 'ResNet18', 'DeeperCNNModel', 'DeepestCNNModel'
+    'DeepCNNModel', 'ResNet18', 'DeeperCNNModel', 'DeeperCNNModelV2', 'DeepestCNNModel'
 ]
 
 
@@ -89,6 +89,25 @@ class DeeperCNNModel(nn.Sequential):
             ResidualBlockPreActivation(16),
             ConvolutionalLayer(16, 32, 3, stride=2),
             SEResidualBlockPreActivation(32),
+            FeedforwardBlock(32, 6, 4, (128,))
+        )
+
+
+class DeeperCNNModelV2(nn.Sequential):
+    def __init__(self):
+        super().__init__(
+            ConvolutionalLayer(1, 8, 5),
+            nn.Dropout2d(0.25, inplace=True),
+            ResidualBlockPreActivation(8),
+            nn.Dropout2d(0.25, inplace=True),
+            ConvolutionalLayer(8, 16, 3, stride=2),
+            nn.Dropout2d(0.25, inplace=True),
+            ResidualBlockPreActivation(16),
+            nn.Dropout2d(0.25, inplace=True),
+            ConvolutionalLayer(16, 32, 3, stride=2),
+            nn.Dropout2d(0.25, inplace=True),
+            SEResidualBlockPreActivation(32),
+            nn.Dropout2d(0.25, inplace=True),
             FeedforwardBlock(32, 6, 4, (128,))
         )
 

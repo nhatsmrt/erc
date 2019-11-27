@@ -49,14 +49,14 @@ train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
 
-model = DeeperCNNModel()
+model = DeeperCNNModelV2()
 optimizer = Adam(model.parameters(), lr=lr)
 
 learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=optimizer,
-    mixup=True, mixup_alpha=0.2
+    mixup=True, mixup_alpha=0.1
 )
 callbacks = [
     ToDeviceCallback(),
