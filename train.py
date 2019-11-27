@@ -14,11 +14,18 @@ batch_size = 128
 frequency = 16000
 lr = 0.001
 
+
+class Demean:
+    def __call__(self, input): return input - input.mean(-1)
+
+
+
 transform_train = Compose(
     [
         RandomCropCenter(30000),
         MFCC(sample_rate=frequency),
-        TimeMasking(max_length_mask=20),
+        Demean(),
+        TimeMasking(20, p=0.25),
         TimePad(280)
     ]
 )
@@ -26,6 +33,7 @@ transform_train = Compose(
 transform_val = Compose(
     [
         MFCC(sample_rate=frequency),
+        Demean(),
         TimePad(280)
     ]
 )
