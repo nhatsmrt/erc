@@ -56,7 +56,7 @@ learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=optimizer,
-    mixup=True, mixup_alpha=0.1
+    mixup=True, mixup_alpha=0.2
 )
 callbacks = [
     ToDeviceCallback(),
