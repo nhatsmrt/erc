@@ -8,6 +8,52 @@ __all__ = [
 ]
 
 
+class Block(nn.Sequential):
+    def __init__(self, in_channels, out_features, kernel_size, padding, pool_size, drop_p):
+        super().__init__(
+            nn.Conv2d(in_channels, out_features, kernel_size, padding=padding),
+            nn.BatchNorm2d(out_features),
+            nn.ReLU(),
+            nn.MaxPool2d(pool_size),
+            nn.Dropout(drop_p)
+        )
+
+class CNNFeatureExtractor2(nn.Sequential):
+    def __init__(self):
+        super().__init__(
+            nn.Conv2d(1, 32, (4, 10), padding=(2,5)),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Dropout(0.2),
+
+            nn.Conv2d(32, 32, (4, 10), padding=(2,5)),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Dropout(0.2),
+
+            nn.Conv2d(32, 32, (4, 10), padding=(2,5)),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Dropout(0.2),
+
+            nn.Conv2d(32, 32, (4, 10), padding=(2,5)),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Dropout(0.2),
+
+            Flatten(),
+            nn.Linear(896, 256),
+
+            nn.Dropout(0.2),
+            nn.BatchNorm1d(256),
+            nn.ReLU(),
+            nn.Dropout(0.2)
+        )
+
 class CNNFeatureExtractor(nn.Sequential):
     def __init__(self):
         super().__init__(
@@ -35,7 +81,7 @@ class CNNAoTModel(nn.Module):
 class CNNModel(nn.Module):
     def __init__(self, pretrained_fe=None):
         super().__init__()
-        self.extractor = CNNFeatureExtractor()
+        self.extractor = CNNFeatureExtractor2()
         if pretrained_fe is not None:
             state_dict = torch.load(pretrained_fe)
             state_dict = { k.replace('extractor.', ''): v for k, v in state_dict.items() if 'extractor.' in k }
@@ -67,7 +113,7 @@ class MediumCNNModel(nn.Sequential):
 class DeepCNNModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            ConvolutionalLayer(1, 8, 5),
+            ConvolutionalLayer(3, 8, 5),
             ResidualBlockPreActivation(8),
             ConvolutionalLayer(8, 16, 3, stride=2),
             ResidualBlockPreActivation(16),
