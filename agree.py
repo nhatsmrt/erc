@@ -28,21 +28,25 @@ def check_agree(df1, df2):
 # print(agree)
 
 
-df_best = pd.read_csv("data/submission_609.csv")
-df_1 = pd.read_csv("data/submission_605.csv")
-df_2 = pd.read_csv("data/submission_601.csv")
-majority_vote(df_best, df_1, df_2, "data/submission_maj_vot.csv")
+# df_best = pd.read_csv("data/submission_609.csv")
+# df_1 = pd.read_csv("data/submission_605.csv")
+# df_2 = pd.read_csv("data/submission_601.csv")
+# majority_vote(df_best, df_1, df_2, "data/submission_maj_vot.csv")
+#
+# agree = check_agree(pd.read_csv("data/submission_609.csv"), pd.read_csv("data/submission_609_2.csv"))
+# print(agree)
+#
+# agree = check_agree(pd.read_csv("data/submission_609.csv"), pd.read_csv("data/submission_maj_vot.csv"))
+# print(agree)
+#
+# agree = check_agree(pd.read_csv("data/submission_605.csv"), pd.read_csv("data/submission_maj_vot.csv"))
+# print(agree)
+#
+# agree = check_agree(pd.read_csv("data/submission_601.csv"), pd.read_csv("data/submission_maj_vot.csv"))
+# print(agree)
 
-agree = check_agree(pd.read_csv("data/submission_609.csv"), pd.read_csv("data/submission_609_2.csv"))
-print(agree)
 
-agree = check_agree(pd.read_csv("data/submission_609.csv"), pd.read_csv("data/submission_maj_vot.csv"))
-print(agree)
-
-agree = check_agree(pd.read_csv("data/submission_605.csv"), pd.read_csv("data/submission_maj_vot.csv"))
-print(agree)
-
-agree = check_agree(pd.read_csv("data/submission_601.csv"), pd.read_csv("data/submission_maj_vot.csv"))
+agree = check_agree(pd.read_csv("data/submission_model_PleaseWin2.csv"), pd.read_csv("data/submission_model_PleaseWin.csv"))
 print(agree)
 
 
