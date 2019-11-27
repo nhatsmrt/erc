@@ -3,7 +3,7 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from nntoolbox.sequence.utils import extract_last
 import torch
 
-__all__ = ['RNNModel']
+__all__ = ['RNNModel', 'RNNModelV2']
 
 
 class SequenceConcatPool(nn.Module):
@@ -44,6 +44,43 @@ class RNNModel(nn.Module):
         output, _ = pad_packed_sequence(output_packed)
 
         return self.op(self.op_dropout(self.pool(output, lengths)))
+
+
+class RNNModelV2(nn.Module):
+    def __init__(self, window_length: int=128, n_coeff: int=40, hop: int=64, hidden_size: int=128, num_layers: int=2):
+        super().__init__()
+        # self.input_dropout = nn.Dropout(0.5)
+        self.gru = nn.GRU(
+            input_size=window_length * n_coeff, hidden_size=hidden_size,
+            num_layers=num_layers, dropout=0.5, bidirectional=True
+        )
+        self.op_dropout = nn.Dropout(0.5)
+        self.hop = hop
+        self.op = nn.Linear(hidden_size * 2, 6)
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.window_length, self.hop, self.n_coeff = window_length, hop, n_coeff
+
+    def forward(self, input: Tensor) -> Tensor:
+        """
+        :param input: (N, 1, n_coeff, T)
+        :return:
+        """
+        input = input.squeeze(1).permute(2, 0, 1)  # (T, N, n_coeff)
+        inputs = []
+        for t in range(0, len(input) - self.window_length, self.hop):
+            inputs.append(
+                input[t:t + self.window_length].transpose(0, 1).reshape(
+                    input.shape[1], self.window_length * self.n_coeff
+                )
+            )
+        inputs = torch.stack(inputs, dim=0) # (T1, N, window_length * n_coeff)
+        outputs, states = self.gru(inputs)  # (T_1, N, num_directions * hidden_size)
+        # (num_layers * num_directions, batch, hidden_size)
+        outputs = outputs.mean(0)
+
+        return self.op(self.op_dropout(outputs))
+
 
 
 
