@@ -18,14 +18,14 @@ transform_train = Compose(
     [
         RandomCropCenter(30000),
         MFCC(sample_rate=frequency),
-        TimePad(256)
+        TimePad(280)
     ]
 )
 
 transform_val = Compose(
     [
         MFCC(sample_rate=frequency),
-        TimePad(256)
+        TimePad(280)
     ]
 )
 

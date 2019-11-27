@@ -2,8 +2,11 @@ from torch import nn
 from nntoolbox.vision.components import *
 from torchvision.models import resnet18
 
-__all__ = ['CNNModel', 'CNNAoTModel',
-            'MediumCNNModel', 'DeepCNNModel', 'ResNet18']
+__all__ = [
+    'CNNModel', 'CNNAoTModel', 'MediumCNNModel',
+    'DeepCNNModel', 'ResNet18'
+]
+
 
 class CNNFeatureExtractor(nn.Sequential):
     def __init__(self):
@@ -16,6 +19,7 @@ class CNNFeatureExtractor(nn.Sequential):
             Flatten()
         )
 
+
 class CNNAoTModel(nn.Module):
     def __init__(self, pretrained_fe=None):
         super().__init__()
@@ -26,6 +30,7 @@ class CNNAoTModel(nn.Module):
         x = self.extractor(x)
         x = self.head(x)
         return x
+
 
 class CNNModel(nn.Module):
     def __init__(self, pretrained_fe=None):
