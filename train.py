@@ -24,8 +24,8 @@ transform_train = Compose(
     [
         RandomCropCenter(30000),
         MFCC(sample_rate=frequency),
-        Demean(),
-        TimeMasking(20, p=0.25),
+        # Demean(),
+        # TimeMasking(20, p=0.25),
         TimePad(280)
     ]
 )
@@ -33,7 +33,7 @@ transform_train = Compose(
 transform_val = Compose(
     [
         MFCC(sample_rate=frequency),
-        Demean(),
+        # Demean(),
         TimePad(280)
     ]
 )
@@ -56,7 +56,7 @@ learner = SupervisedLearner(
     train_loader, val_loader, model=model,
     criterion=nn.CrossEntropyLoss(),
     optimizer=optimizer,
-    # mixup=True, mixup_alpha=0.1
+    mixup=True, mixup_alpha=0.1
 )
 callbacks = [
     ToDeviceCallback(),
