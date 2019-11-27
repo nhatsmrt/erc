@@ -16,7 +16,7 @@ lr = 0.001
 
 
 class Demean:
-    def __call__(self, input): return input - input.mean(-1)
+    def __call__(self, input): return input - input.mean(-1, keepdim=True)
 
 
 
