@@ -8,7 +8,7 @@ from src.inference import EmoRec
 frequency = 16000
 transform = Compose(
     [
-        RandomCropCenter(30000),
+        RandomCropCenter(45000),
         MFCC(sample_rate=frequency),
         TimePad(280)
     ]

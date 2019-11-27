@@ -5,6 +5,30 @@ from torchvision.models import resnet18
 __all__ = ['CNNModel', 'CNNAoTModel',
             'MediumCNNModel', 'DeepCNNModel', 'ResNet18']
 
+class CNNFeatureExtractor2(nn.Sequential):
+    def __init__(self):
+        super().__init__(
+            nn.Conv2d(1, 32, (4, 10)),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Dropout(0.2),
+
+            nn.Conv2d(32, 32, (4, 10)),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            nn.Dropout(0.2),
+
+            Flatten(),
+            nn.Linear(7520, 256),
+
+            nn.Dropout(0.2),
+            nn.BatchNorm1d(256),
+            nn.ReLU(),
+            nn.Dropout(0.2)
+        )
+
 class CNNFeatureExtractor(nn.Sequential):
     def __init__(self):
         super().__init__(
@@ -30,7 +54,7 @@ class CNNAoTModel(nn.Module):
 class CNNModel(nn.Module):
     def __init__(self, pretrained_fe=None):
         super().__init__()
-        self.extractor = CNNFeatureExtractor()
+        self.extractor = CNNFeatureExtractor2()
         if pretrained_fe is not None:
             state_dict = torch.load(pretrained_fe)
             state_dict = { k.replace('extractor.', ''): v for k, v in state_dict.items() if 'extractor.' in k }
@@ -40,7 +64,11 @@ class CNNModel(nn.Module):
         self.head = nn.Linear(256, 6)
 
     def forward(self, x):
-        x = self.extractor(x)
+        try:
+            x = self.extractor(x)
+        except Exception as e:
+            print(x.shape)
+            print(e)
         x = self.head(x)
         return x
 
@@ -59,7 +87,7 @@ class MediumCNNModel(nn.Sequential):
 class DeepCNNModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            ConvolutionalLayer(1, 8, 5),
+            ConvolutionalLayer(3, 8, 5),
             ResidualBlockPreActivation(8),
             ConvolutionalLayer(8, 16, 3, stride=2),
             ResidualBlockPreActivation(16),
