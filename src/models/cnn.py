@@ -72,7 +72,7 @@ class DeepCNNModel(nn.Sequential):
             ConvolutionalLayer(8, 16, 3, stride=2),
             ResidualBlockPreActivation(16),
             ConvolutionalLayer(16, 32, 3, stride=2),
-            ResidualBlockPreActivation(32),
+            SEResidualBlockPreActivation(32),
             nn.AdaptiveAvgPool2d(4),
             Flatten(),
             nn.Dropout(),
