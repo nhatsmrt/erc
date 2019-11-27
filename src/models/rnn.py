@@ -57,11 +57,14 @@ class RNNModelV2(nn.Module):
         )
         self.op_dropout = nn.Dropout(0.5)
         self.hop = hop
-        self.op = nn.Linear(hidden_size * 2, 6)
+        self.op = nn.Linear(128, 6)
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.window_length, self.hop, self.n_coeff = window_length, hop, n_coeff
-        # self.attention = AdditiveAttention()
+        self.attention = AdditiveAttention(
+            value_dim=128, key_dim=128, query_dim=128, hidden_dim=hidden_size, return_summary=True
+        )
+        self.transform = nn.Linear(256, 128 * 3)
 
     def forward(self, input: Tensor) -> Tensor:
         """
@@ -78,10 +81,12 @@ class RNNModelV2(nn.Module):
             )
         inputs = torch.stack(inputs, dim=0) # (T1, N, window_length * n_coeff)
         outputs, states = self.gru(inputs)  # (T_1, N, num_directions * hidden_size)
-        # (num_layers * num_directions, batch, hidden_size)
-        outputs = outputs.mean(0)
+        # outputs = outputs.mean(0)
+        outputs_transformed = self.transform(outputs)
+        keys, queries, values = outputs_transformed.chunk(3, -1)
+        attention_outputs, _ = self.attention(keys, queries[len(queries) - 1:], values)
 
-        return self.op(self.op_dropout(outputs))
+        return self.op(self.op_dropout(attention_outputs.squeeze(0)))
 
 
 
