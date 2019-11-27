@@ -6,16 +6,16 @@ from torchvision.transforms import Compose, RandomCrop, ToPILImage, ToTensor
 from src.inference import EmoRec
 
 frequency = 16000
-transform_tta = Compose(
-    [
-        RandomCropCenter(30000),
-        MFCC(sample_rate=frequency),
-        TimePad(280)
-    ]
-)
+# transform_tta = Compose(
+#     [
+#         RandomCropCenter(30000),
+#         MFCC(sample_rate=frequency),
+#         TimePad(280)
+#     ]
+# )
 transform_main = Compose(
     [
-        MFCC(sample_rate=frequency),
+        MFCC(sample_rate=frequency, n_mfcc=30),
         TimePad(280)
     ]
 )
