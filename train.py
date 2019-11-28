@@ -33,7 +33,7 @@ transform_val = Compose(
 for i in range(2):
     print('===== Run {} ===='.format(i))
 
-    model = ICModel()
+    model = CNNModel()
     optimizer = Adam(model.parameters(), lr=lr)
 
     train_val_dataset = ERCDataRaw("data/", True)
@@ -58,6 +58,7 @@ for i in range(2):
         LossLogger(),
         ModelCheckpoint(learner=learner, filepath="weights/model_{}.pt".format(i), monitor='accuracy', mode='max'),
         ReduceLROnPlateauCB(optimizer, patience=7, factor=0.5),
+        ConfusionMatrixCB(),
         Tensorboard()
     ]
 
