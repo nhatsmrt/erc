@@ -9,6 +9,8 @@ from torch.optim import Adam
 from src.utils import *
 from src.models import *
 
+print("Running Nhat's script")
+
 batch_size = 128
 frequency = 16000
 lr = 0.001
