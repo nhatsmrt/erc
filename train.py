@@ -31,7 +31,7 @@ transform_val = Compose(
 for i in range(5):
     print('===== Run {} ===='.format(i))
 
-    model = ModifiedNahModel()
+    model = CNNModel()
     optimizer = Adam(model.parameters(), lr=lr)
 
     train_val_dataset = ERCDataRaw("data/", True)
@@ -48,8 +48,8 @@ for i in range(5):
         train_loader, val_loader, model=model,
         criterion=nn.CrossEntropyLoss(),
         optimizer=optimizer,
-        mixup=True,
-        mixup_alpha=0.1
+        # mixup=True,
+        # mixup_alpha=0.1
     )
     callbacks = [
         ToDeviceCallback(),
