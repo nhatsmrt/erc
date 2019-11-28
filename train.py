@@ -49,7 +49,7 @@ train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
 
-model = DeeperCNNModelV2()
+model = DeeperCNNModel()
 optimizer = Adam(model.parameters(), lr=lr)
 
 learner = SupervisedLearner(
@@ -62,6 +62,7 @@ callbacks = [
     ToDeviceCallback(),
     LossLogger(),
     ModelCheckpoint(learner=learner, filepath="weights/model.pt", monitor='accuracy', mode='max'),
+    ConfusionMatrixCB(),
     ReduceLROnPlateauCB(optimizer, patience=7),
     Tensorboard()
 ]
