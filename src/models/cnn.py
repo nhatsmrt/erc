@@ -5,8 +5,7 @@ from torchvision.models import resnet18
 
 __all__ = [
     'CNNModel', 'CNNAoTModel', 'MediumCNNModel',
-    'DeepCNNModel', 'ResNet18', 'DeeperCNNModel', 'DeeperCNNModelV2',
-    'DeepestCNNModel'
+    'DeepCNNModel', 'ResNet18', 'DeeperCNNModel', 'DeeperCNNModelV2', 'ModifiedNahModel'
 ]
 
 
@@ -156,6 +155,24 @@ class DeeperCNNModelV2(nn.Sequential):
             SEResidualBlockPreActivation(32),
             nn.Dropout2d(0.2, inplace=True),
             FeedforwardBlock(32, 6, 4, (128,))
+        )
+
+
+class ModifiedNahModel(nn.Sequential):
+    def __init__(self):
+        super().__init__(
+            Block(1, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+
+            Flatten(),
+            nn.Linear(896, 256),
+            nn.Dropout(0.2),
+            nn.BatchNorm1d(256),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(256, 6)
         )
 
 

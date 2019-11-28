@@ -31,7 +31,7 @@ transform_val = Compose(
 for i in range(5):
     print('===== Run {} ===='.format(i))
 
-    model = CNNModel()
+    model = ModifiedNahModel()
     optimizer = Adam(model.parameters(), lr=lr)
 
     train_val_dataset = ERCDataRaw("data/", True)

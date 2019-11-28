@@ -30,6 +30,6 @@ class Block(nn.Sequential):
             nn.BatchNorm2d(out_features),
             nn.ReLU(),
             nn.MaxPool2d(pool_size),
-            nn.Dropout(drop_p)
+            nn.Dropout2d(drop_p, inplace=True)
         )
 
