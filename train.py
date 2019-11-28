@@ -22,10 +22,7 @@ class Demean:
 
 transform_train = Compose(
     [
-        RandomCropCenter(30000),
         MFCC(sample_rate=frequency),
-        # Demean(),
-        # TimeMasking(20, p=0.25),
         TimePad(280)
     ]
 )
@@ -33,7 +30,6 @@ transform_train = Compose(
 transform_val = Compose(
     [
         MFCC(sample_rate=frequency),
-        # Demean(),
         TimePad(280)
     ]
 )
@@ -49,7 +45,7 @@ train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 
 
-model = DeeperCNNModel()
+model = CNNModel()
 optimizer = Adam(model.parameters(), lr=lr)
 
 learner = SupervisedLearner(
@@ -63,7 +59,7 @@ callbacks = [
     LossLogger(),
     ModelCheckpoint(learner=learner, filepath="weights/model.pt", monitor='accuracy', mode='max'),
     ConfusionMatrixCB(),
-    ReduceLROnPlateauCB(optimizer, patience=7),
+    ReduceLROnPlateauCB(optimizer, patience=7, factor=0.5),
     Tensorboard()
 ]
 
