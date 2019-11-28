@@ -1,27 +1,35 @@
-#
-#
-# class ConvolutionalLayerWithDropout(nn.Sequential):
-#     """
-#     Simple convolutional layer: input -> conv2d -> activation -> norm 2d
-#     """
-#     def __init__(
-#             self, in_channels, out_channels,
-#             kernel_size=3, stride=1, padding=0,
-#             bias=False, activation=nn.ReLU, normalization=nn.BatchNorm2d
-#     ):
-#         super().__init__()
-#         self.add_module(
-#             "main",
-#             nn.Sequential(
-#                 nn.Conv2d(
-#                     in_channels=in_channels,
-#                     out_channels=out_channels,
-#                     kernel_size=kernel_size,
-#                     stride=stride,
-#                     padding=padding,
-#                     bias=bias
-#                 ),
-#                 activation(),
-#                 normalization(num_features=out_channels)
-#             )
-#         )
+from torch import nn
+
+
+__all__ = ['ICBlock', 'Block']
+
+
+class ICBlock(nn.Sequential):
+    """
+    Putting batch normalization and dropout before weight layers.
+
+    References:
+
+        Guangyong Chen, Pengfei Chen, Yujun Shi, Chang-Yu Hsieh, Benben Liao, Shengyu Zhang.
+        "Rethinking the Usage of Batch Normalization and Dropout in the Training of Deep Neural Networks."
+        https://arxiv.org/abs/1905.05928
+    """
+    def __init__(self, in_channels, out_channels, kernel_size, padding=0, stride: int=1, drop_p: float=0.2):
+        super().__init__(
+            nn.BatchNorm2d(in_channels),
+            nn.Dropout(drop_p),
+            nn.Conv2d(in_channels, out_channels, kernel_size, padding=padding, stride=stride),
+            nn.ReLU()
+        )
+
+
+class Block(nn.Sequential):
+    def __init__(self, in_channels, out_features, kernel_size, padding, pool_size, drop_p):
+        super().__init__(
+            nn.Conv2d(in_channels, out_features, kernel_size, padding=padding),
+            nn.BatchNorm2d(out_features),
+            nn.ReLU(),
+            nn.MaxPool2d(pool_size),
+            nn.Dropout(drop_p)
+        )
+
