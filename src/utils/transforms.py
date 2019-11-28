@@ -155,6 +155,7 @@ class DiscardFirstCoeff:
         """
         return mfcc[:, 1:, :]
 
+
 class Noise:
     def __call__(self, data):
         """
@@ -176,13 +177,15 @@ def pitch(data, sample_rate):
                                       sample_rate, n_steps=pitch_change, 
                                       bins_per_octave=bins_per_octave)
     return data
-    
+
+
 def dyn_change(data):
     """
     Random Value Change.
     """
     dyn_change = np.random.uniform(low=-0.5 ,high=7)  # default low = 1.5, high = 3
     return (data * dyn_change)
+
 
 class SpeedNPitch:
     def __call__(self, data):
@@ -208,6 +211,7 @@ class RandomFlip:
             spectrogram = torch.flip(spectrogram, dims=(-1, ))
         return spectrogram
 
+
 class RandomCropCenter:
     def __init__(self, length: int=48000):
         self.length = length
@@ -220,6 +224,7 @@ class RandomCropCenter:
         audio = audio[:, start - self.length // 2 : start - self.length // 2 + self.length]
 
         return audio
+
 
 class CropCenter:
     def __init__(self, length: int=48000):
@@ -234,6 +239,7 @@ class CropCenter:
 
         return audio
 
+
 class Threshold:
     def __init__(self, lower: float, upper: float):
         self.lower = lower
@@ -244,9 +250,11 @@ class Threshold:
         audio[torch.abs(audio) / torch.max(audio) > self.upper] = 0
         return audio
 
+
 def gauss(n=26,sigma=10):
     r = range(-int(n/2),int(n/2)+1)
     return [1 / (sigma * np.sqrt(2*np.pi)) * np.exp(-float(x)**2/(2*sigma**2)) for x in r]
+
 
 class Smooth:
     def __call__(self, audio: Tensor) -> Tensor:
@@ -261,6 +269,7 @@ class Smooth:
         # plt.show()
 
         return audio
+
 
 class TimePad:
     def __init__(self, length, exact: bool=True, pad: str='center'):
