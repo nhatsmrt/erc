@@ -28,7 +28,7 @@ transform_val = Compose(
     ]
 )
 
-for i in range(5):
+for i in range(2):
     print('===== Run {} ===='.format(i))
 
     model = CNNModel()
@@ -65,7 +65,7 @@ for i in range(5):
     }
 
     final = learner.learn(
-        n_epoch=100,
+        n_epoch=75,
         callbacks=callbacks,
         metrics=metrics,
         final_metric='accuracy'
