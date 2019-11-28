@@ -17,15 +17,17 @@ frequency = 16000
 
 transform_train = Compose(
     [
-        MFCC(sample_rate=frequency),
-        TimePad(280)
+        CropCenter(40000),
+        Noise(),
+        MFCC(sample_rate=frequency, n_mfcc=30),
+        TimePad(216)
     ]
 )
 
 transform_val = Compose(
     [
-        MFCC(sample_rate=frequency),
-        TimePad(280)
+        MFCC(sample_rate=frequency, n_mfcc=30),
+        TimePad(216)
     ]
 )
 

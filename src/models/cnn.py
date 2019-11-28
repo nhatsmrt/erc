@@ -19,37 +19,17 @@ class Block(nn.Sequential):
         )
 
 class CNNFeatureExtractor2(nn.Sequential):
-    def __init__(self):
+    def __init__(self, size):
         super().__init__(
-            nn.Conv2d(1, 32, (4, 10), padding=(2,5)),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            nn.Dropout(0.2),
-
-            nn.Conv2d(32, 32, (4, 10), padding=(2,5)),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            nn.Dropout(0.2),
-
-            nn.Conv2d(32, 32, (4, 10), padding=(2,5)),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            nn.Dropout(0.2),
-
-            nn.Conv2d(32, 32, (4, 10), padding=(2,5)),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            nn.Dropout(0.2),
+            Block(1, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
 
             Flatten(),
-            nn.Linear(896, 256),
-
+            nn.Linear(896, size),
             nn.Dropout(0.2),
-            nn.BatchNorm1d(256),
+            nn.BatchNorm1d(size),
             nn.ReLU(),
             nn.Dropout(0.2)
         )
@@ -69,7 +49,7 @@ class CNNFeatureExtractor(nn.Sequential):
 class CNNAoTModel(nn.Module):
     def __init__(self, pretrained_fe=None):
         super().__init__()
-        self.extractor = CNNFeatureExtractor()
+        self.extractor = CNNFeatureExtractor2(256)
         self.head = nn.Linear(256, 2)
 
     def forward(self, x):
@@ -81,7 +61,7 @@ class CNNAoTModel(nn.Module):
 class CNNModel(nn.Module):
     def __init__(self, pretrained_fe=None):
         super().__init__()
-        self.extractor = CNNFeatureExtractor2()
+        self.extractor = CNNFeatureExtractor2(256)
         if pretrained_fe is not None:
             state_dict = torch.load(pretrained_fe)
             state_dict = { k.replace('extractor.', ''): v for k, v in state_dict.items() if 'extractor.' in k }

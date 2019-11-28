@@ -10,7 +10,7 @@ import librosa
 __all__ = [
     'LogMelSpectrogram', 'DBScaleMelSpectrogram',
     'RandomlyCrop', 'RandomlyCropFraction',
-    'RandomFlip', 'RandomCropCenter', 'Threshold', 'Smooth',
+    'RandomFlip', 'RandomCropCenter', 'CropCenter', 'Threshold', 'Smooth',
     'FrequencyMasking', 'TimeMasking', 'NormalizeAcrossTime',
     'DiscardFirstCoeff', 'TimePad', 'AugmentDelta',
     'Noise', 'SpeedNPitch'
