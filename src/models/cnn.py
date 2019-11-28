@@ -5,20 +5,9 @@ from torchvision.models import resnet18
 
 __all__ = [
     'CNNModel', 'CNNAoTModel', 'MediumCNNModel',
-    'DeepCNNModel', 'ResNet18', 'DeeperCNNModel', 'DeeperCNNModelV2', 'ModifiedNahModel'
+    'DeepCNNModel', 'ResNet18', 'DeeperCNNModel',
+    'DeeperCNNModelV2', 'ModifiedNahModel','ICModel'
 ]
-
-
-class ICResidualBlock(nn.Module):
-    def __init__(self, in_channels: int):
-        super().__init__()
-        self.conv_path = nn.Sequential(
-            ICBlock(in_channels, in_channels, kernel_size=(3, 9), padding=(1, 4)),
-            ICBlock(in_channels, in_channels, kernel_size=(3, 9), padding=(1, 4))
-        )
-
-    def forward(self, input: Tensor) -> Tensor:
-        return input + self.conv_path(input)
 
 
 class CNNFeatureExtractor2(nn.Sequential):
@@ -179,15 +168,18 @@ class ModifiedNahModel(nn.Sequential):
 class ICModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            ICBlock(1, 8, 4),
-            ICResidualBlock(8),
-            nn.MaxPool2d(2),
-            ICResidualBlock(16),
-            ConvolutionalLayer(16, 32, 3, stride=2),
-            SEResidualBlockPreActivation(32),
-            ConvolutionalLayer(32, 64, 3, stride=2),
-            SEResidualBlockPreActivation(64),
-            FeedforwardBlock(64, 6, 4, (128,))
+            ICBlockWithMaxPool(1, 32, (4, 10), (2, 5), 2, 0.2),
+            ICBlockWithMaxPool(32, 32, (4, 10), (2, 5), 2, 0.2),
+            ICBlockWithMaxPool(32, 32, (4, 10), (2, 5), 2, 0.2),
+            ICBlockWithMaxPool(32, 32, (4, 10), (2, 5), 2, 0.2),
+
+            Flatten(),
+            nn.Linear(896, 256),
+            nn.Dropout(0.2),
+            nn.BatchNorm1d(256),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(256, 6)
         )
 
 
