@@ -67,3 +67,13 @@ final = learner.learn(
     metrics=metrics,
     final_metric='accuracy'
 )
+
+
+
+class ConvGRUCell(nn.Module):
+    def forward(self, input, hidden=None):
+        """
+        :param input: (N, C, H, W)
+        :param hidden: (N, C_hidden, H, W)
+        :return:
+        """
