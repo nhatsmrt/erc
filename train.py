@@ -67,7 +67,7 @@ for i in range(2):
     }
 
     final = learner.learn(
-        n_epoch=75,
+        n_epoch=100,
         callbacks=callbacks,
         metrics=metrics,
         final_metric='accuracy'
