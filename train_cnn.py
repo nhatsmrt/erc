@@ -57,6 +57,7 @@ for i in range(5):
         ToDeviceCallback(),
         LossLogger(),
         ModelCheckpoint(learner=learner, filepath="weights/model_{}.pt".format(i), monitor='accuracy', mode='max'),
+        ConfusionMatrixCB(),
         ReduceLROnPlateauCB(optimizer, patience=7, factor=0.5),
         Tensorboard()
     ]
