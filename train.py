@@ -33,7 +33,7 @@ transform_val = Compose(
 for i in range(2):
     print('===== Run {} ===='.format(i))
 
-    model = CNNModel()
+    model = ICModel()
     optimizer = Adam(model.parameters(), lr=lr)
 
     train_val_dataset = ERCDataRaw("data/", True)
