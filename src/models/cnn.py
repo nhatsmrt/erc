@@ -1,10 +1,12 @@
 from torch import nn
 from nntoolbox.vision.components import *
+from .layers import *
 from torchvision.models import resnet18
 
 __all__ = [
     'CNNModel', 'CNNAoTModel', 'MediumCNNModel',
-    'DeepCNNModel', 'ResNet18', 'DeeperCNNModel', 'DeeperCNNModelV2', 'DeepestCNNModel'
+    'DeepCNNModel', 'ResNet18', 'DeeperCNNModel',
+    'DeeperCNNModelV2', 'ModifiedNahModel','ICModel'
 ]
 
 class ResBlock(nn.Module):
@@ -30,16 +32,6 @@ class ResBlock(nn.Module):
         x = self.pool(x)
         x = self.dropout(x)
         return x
-
-class Block(nn.Sequential):
-    def __init__(self, in_channels, out_features, kernel_size, padding, pool_size, drop_p):
-        super().__init__(
-            nn.Conv2d(in_channels, out_features, kernel_size, padding=padding),
-            nn.BatchNorm2d(out_features),
-            nn.ReLU(),
-            nn.MaxPool2d(pool_size),
-            nn.Dropout(drop_p)
-        )
 
 class CNNFeatureExtractor2(nn.Sequential):
     def __init__(self, size):
@@ -143,33 +135,51 @@ class DeeperCNNModelV2(nn.Sequential):
     def __init__(self):
         super().__init__(
             ConvolutionalLayer(1, 8, 5),
-            nn.Dropout2d(0.25, inplace=True),
             ResidualBlockPreActivation(8),
-            nn.Dropout2d(0.25, inplace=True),
+            nn.Dropout2d(0.2, inplace=True),
             ConvolutionalLayer(8, 16, 3, stride=2),
-            nn.Dropout2d(0.25, inplace=True),
             ResidualBlockPreActivation(16),
-            nn.Dropout2d(0.25, inplace=True),
+            nn.Dropout2d(0.2, inplace=True),
             ConvolutionalLayer(16, 32, 3, stride=2),
-            nn.Dropout2d(0.25, inplace=True),
             SEResidualBlockPreActivation(32),
-            nn.Dropout2d(0.25, inplace=True),
+            nn.Dropout2d(0.2, inplace=True),
             FeedforwardBlock(32, 6, 4, (128,))
         )
 
 
-class DeepestCNNModel(nn.Sequential):
+class ModifiedNahModel(nn.Sequential):
     def __init__(self):
         super().__init__(
-            ConvolutionalLayer(1, 8, 5),
-            ResidualBlockPreActivation(8),
-            ConvolutionalLayer(8, 16, 3, stride=2),
-            ResidualBlockPreActivation(16),
-            ConvolutionalLayer(16, 32, 3, stride=2),
-            SEResidualBlockPreActivation(32),
-            ConvolutionalLayer(32, 64, 3, stride=2),
-            SEResidualBlockPreActivation(64),
-            FeedforwardBlock(64, 6, 4, (128,))
+            Block(1, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+
+            Flatten(),
+            nn.Linear(896, 256),
+            nn.Dropout(0.2),
+            nn.BatchNorm1d(256),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(256, 6)
+        )
+
+
+class ICModel(nn.Sequential):
+    def __init__(self):
+        super().__init__(
+            ICBlockWithMaxPool(1, 32, (4, 10), (2, 5), 2, 0.2),
+            ICBlockWithMaxPool(32, 32, (4, 10), (2, 5), 2, 0.2),
+            ICBlockWithMaxPool(32, 32, (4, 10), (2, 5), 2, 0.2),
+            ICBlockWithMaxPool(32, 32, (4, 10), (2, 5), 2, 0.2),
+
+            Flatten(),
+            nn.Linear(896, 256),
+            nn.Dropout(0.2),
+            nn.BatchNorm1d(256),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(256, 6)
         )
 
 
