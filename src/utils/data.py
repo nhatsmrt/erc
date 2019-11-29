@@ -7,9 +7,12 @@ import pandas as pd
 from torch import randperm
 from torch._utils import _accumulate
 import numpy as np
+from sklearn.model_selection import train_test_split
+
 
 __all__ = ['ERCData', 'ERCDataV2', 'ERCDataRaw', 'ERCAoTData',
-            'TransformableSubset', 'random_split_before_transform']
+            'TransformableSubset', 'random_split_before_transform', 'stratified_random_split'
+           ]
 
 
 class ERCData(Dataset):
@@ -186,4 +189,18 @@ def random_split_before_transform(dataset, lengths, transforms):
         TransformableSubset(dataset, indices[offset - length:offset], transform)
         for offset, length, transform in zip(_accumulate(lengths), lengths, transforms)
     ]
+
+
+def stratified_random_split(dataset: Dataset, lengths, transforms):
+    assert len(lengths) == 2
+    indices = list(range(sum(lengths)))
+    train_size = lengths[0] / sum(lengths)
+    train_indices, val_indices = train_test_split(
+        indices, train_size=train_size, stratify=dataset.labels, shuffle=True
+    )
+
+    return (
+        TransformableSubset(dataset, train_indices, transforms[0]),
+        TransformableSubset(dataset, val_indices, transforms[1])
+    )
 
