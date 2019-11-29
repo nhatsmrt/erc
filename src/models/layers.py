@@ -42,8 +42,8 @@ class ICResidualBlock(nn.Module):
     def __init__(self, in_channels: int, drop_p: float=0.2):
         super().__init__()
         self.conv_path = nn.Sequential(
-            ICBlock(in_channels, in_channels, kernel_size=(3, 9), padding=(1, 4), drop_p=drop_p),
-            ICBlock(in_channels, in_channels, kernel_size=(3, 9), padding=(1, 4), drop_p=drop_p)
+            ICBlock(in_channels, in_channels, kernel_size=(4, 10), padding=(2, 5), drop_p=drop_p),
+            ICBlock(in_channels, in_channels, kernel_size=(4, 10), padding=(2, 5), drop_p=drop_p)
         )
 
     def forward(self, input: Tensor) -> Tensor:
@@ -177,3 +177,25 @@ class ConvGRU2d(nn.Module):
             outputs.append(hidden)
 
         return torch.stack(outputs, dim=0), hidden
+
+
+class ConvolutionalLayerV2(nn.Sequential):
+    def __init__(self, in_channels, out_channels, kernel_size, padding: int=0, stride: int=1, dropout_p: float=0.2):
+        super().__init__(
+            nn.BatchNorm2d(in_channels),
+            nn.Dropout(dropout_p),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(in_channels, out_channels, kernel_size, padding=padding, stride=stride)
+        )
+
+
+class ResidualBlockPreactivationV2(nn.Module):
+    def __init__(self, in_channels: int, dropout_p: float=0.2):
+        super().__init__()
+        self.conv_path = nn.Sequential(
+            ConvolutionalLayerV2(in_channels, in_channels, (4, 10), (2, 5), dropout_p=dropout_p),
+            ConvolutionalLayerV2(in_channels, in_channels, (4, 10), (2, 5), dropout_p=dropout_p)
+        )
+
+    def forward(self, input):
+        return input + self.conv_path(input)
