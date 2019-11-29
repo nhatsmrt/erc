@@ -7,6 +7,29 @@ __all__ = [
     'DeepCNNModel', 'ResNet18', 'DeeperCNNModel', 'DeeperCNNModelV2', 'DeepestCNNModel'
 ]
 
+class ResBlock(nn.Module):
+    def __init__(self, in_channels, out_features, kernel_size, padding, pool_size, drop_p):
+        super().__init__()
+        self.bn1 = nn.BatchNorm2d(in_channels)
+        self.relu1 = nn.ReLU()
+        self.conv1 = nn.Conv2d(in_channels, out_features, kernel_size, padding=padding)
+        nn.init.kaiming_normal_(self.conv1.weight)
+        self.bn2 = nn.BatchNorm2d(out_features)
+        self.relu2 = nn.ReLU()
+        self.conv2 = nn.Conv2d(out_features, out_features, kernel_size, padding=padding)
+        nn.init.kaiming_normal_(self.conv2.weight)
+        self.pool = nn.MaxPool2d(pool_size)
+        self.dropout = nn.Dropout(drop_p)
+
+    def forward(self, x):
+        res = x
+        x = self.conv1(self.relu1(self.bn1(x)))
+        x = self.conv2(self.relu2(self.bn2(x)))
+        if res.shape[1] == x.shape[1]:
+            x += res
+        x = self.pool(x)
+        x = self.dropout(x)
+        return x
 
 class Block(nn.Sequential):
     def __init__(self, in_channels, out_features, kernel_size, padding, pool_size, drop_p):
@@ -21,13 +44,14 @@ class Block(nn.Sequential):
 class CNNFeatureExtractor2(nn.Sequential):
     def __init__(self, size):
         super().__init__(
-            Block(1, 32, (4, 10), (2, 5), 2, 0.2),
-            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
-            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
-            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(1, 32, (3, 9), (1, 4), 2, 0.2),
+            Block(32, 32, (3, 9), (1, 4), 2, 0.2),
+            Block(32, 32, (3, 9), (1, 4), 2, 0.2),
+            Block(32, 32, (3, 9), (1, 4), 2, 0.2),
 
             Flatten(),
-            nn.Linear(896, size),
+
+            nn.Linear(416, size),
             nn.Dropout(0.2),
             nn.BatchNorm1d(size),
             nn.ReLU(),
@@ -57,7 +81,6 @@ class CNNAoTModel(nn.Module):
         x = self.head(x)
         return x
 
-
 class CNNModel(nn.Module):
     def __init__(self, pretrained_fe=None):
         super().__init__()
@@ -66,15 +89,12 @@ class CNNModel(nn.Module):
             state_dict = torch.load(pretrained_fe)
             state_dict = { k.replace('extractor.', ''): v for k, v in state_dict.items() if 'extractor.' in k }
             self.extractor.load_state_dict(state_dict)
-            for param in self.extractor.parameters():
-                param.requires_grad = False
         self.head = nn.Linear(256, 6)
 
     def forward(self, x):
         x = self.extractor(x)
         x = self.head(x)
         return x
-
 
 class MediumCNNModel(nn.Sequential):
     def __init__(self):

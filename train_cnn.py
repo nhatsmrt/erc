@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader, random_split
 from torch import nn
-from torchaudio.transforms import MFCC
+from torchaudio.transforms import MFCC, MelSpectrogram, Spectrogram
 from torchvision.transforms import Compose
 from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
@@ -34,6 +34,10 @@ for i in range(5):
     print('===== Run {} ===='.format(i))
     
     model = CNNModel()
+    # optimizer = Adam([
+    #             {'params': model.extractor.parameters(), 'lr': lr / 2},
+    #             {'params': model.head.parameters(), 'lr': lr}
+    #         ])
     optimizer = Adam(model.parameters(), lr=lr)
 
     train_val_dataset = ERCDataRaw("data/", True)
@@ -58,7 +62,7 @@ for i in range(5):
         LossLogger(),
         ModelCheckpoint(learner=learner, filepath="weights/model_{}.pt".format(i), monitor='accuracy', mode='max'),
         ConfusionMatrixCB(),
-        ReduceLROnPlateauCB(optimizer, patience=7, factor=0.5),
+        ReduceLROnPlateauCB(optimizer, patience=5, factor=0.5),
         Tensorboard()
     ]
 
