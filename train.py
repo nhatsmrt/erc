@@ -11,7 +11,7 @@ from src.models import *
 
 print("Running Nhat's script")
 
-batch_size = 128
+batch_size = 64
 frequency = 16000
 lr = 0.001
 
@@ -33,7 +33,7 @@ transform_val = Compose(
 for i in range(2):
     print('===== Run {} ===='.format(i))
 
-    model = ICModel()
+    model = CNNModel()
     optimizer = Adam(model.parameters(), lr=lr)
 
     train_val_dataset = ERCDataRaw("data/", True)
