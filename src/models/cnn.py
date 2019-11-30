@@ -36,17 +36,17 @@ class ResBlock(nn.Module):
 class CNNFeatureExtractor2(nn.Sequential):
     def __init__(self, size):
         super().__init__(
-            Block(1, 32, (3, 9), (1, 4), 2, 0.2),
-            Block(32, 32, (3, 9), (1, 4), 2, 0.2),
-            Block(32, 32, (3, 9), (1, 4), 2, 0.2),
-            Block(32, 32, (3, 9), (1, 4), 2, 0.2),
+            Block(1, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
+            Block(32, 32, (4, 10), (2, 5), 2, 0.2),
 
             Flatten(),
 
-            nn.Linear(416, size),
+            nn.Linear(896, size),
             nn.Dropout(0.2),
             nn.BatchNorm1d(size),
-            nn.ReLU(),
+            nn.ReLU(inplace=True),
             nn.Dropout(0.2)
         )
 

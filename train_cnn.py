@@ -5,12 +5,12 @@ from torchvision.transforms import Compose
 from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
-from torch.optim import Adam
+from torch.optim import *
 from src.utils import *
 from src.models import *
 
 
-batch_size = 128
+batch_size = 32
 frequency = 16000
 lr = 0.001
 
@@ -43,7 +43,7 @@ for i in range(5):
     train_val_dataset = ERCDataRaw("data/", True)
     train_size = int(0.8 * len(train_val_dataset))
     val_size = len(train_val_dataset) - train_size
-    train_data, val_data = random_split_before_transform(
+    train_data, val_data = stratified_random_split(
         train_val_dataset, lengths=[train_size, val_size], transforms=[transform_train, transform_val]
     )
 
@@ -72,7 +72,7 @@ for i in range(5):
     }
 
     final = learner.learn(
-        n_epoch=100,
+        n_epoch=80,
         callbacks=callbacks,
         metrics=metrics,
         final_metric='accuracy'

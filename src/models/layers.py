@@ -55,9 +55,9 @@ class Block(nn.Sequential):
         super().__init__(
             nn.Conv2d(in_channels, out_features, kernel_size, padding=padding),
             nn.BatchNorm2d(out_features),
-            nn.ReLU(),
+            nn.ReLU(inplace=True),
             nn.MaxPool2d(pool_size),
-            nn.Dropout2d(drop_p, inplace=True)
+            nn.Dropout(drop_p, inplace=True)
         )
 
 
