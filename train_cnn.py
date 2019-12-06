@@ -8,7 +8,7 @@ from nntoolbox.metrics import *
 from torch.optim import *
 from src.utils import *
 from src.models import *
-
+import numpy as np
 
 batch_size = 32
 frequency = 16000
@@ -16,7 +16,7 @@ lr = 0.001
 
 transform_train = Compose(
     [
-        # CropCenter(40000),
+        # RandomCropCenter(40000),
         # Noise(),
         MFCC(sample_rate=frequency, n_mfcc=30),
         TimePad(216)
@@ -30,6 +30,7 @@ transform_val = Compose(
     ]
 )
 
+run_val_acc = []
 for i in range(5):
     print('===== Run {} ===='.format(i))
     
@@ -77,3 +78,6 @@ for i in range(5):
         metrics=metrics,
         final_metric='accuracy'
     )
+
+    run_val_acc.append(final)
+np.array(run_val_acc).tofile('weights/val_acc.dat')
