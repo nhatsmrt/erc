@@ -7,7 +7,7 @@
 </a>
 
 </p>
-<a href="https://colab.research.google.com/github/nhatsmrt/erc/ERC.ipynb">
+<a href="https://colab.research.google.com/github/nhatsmrt/erc/blob/master/ERC.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
