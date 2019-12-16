@@ -1,9 +1,19 @@
 # PiMA team's code for ERC Contest
-<strong>Members</strong>: Pham Hoang Nhat, Vu Le The Anh, Nguyen Ho Thang Long.
+<div style="text-align:center"><img src="original logo (with background).png" alt="styled" width="128" /></div>
 <br />
-<strong>Final Result</strong>: 8th place in the 1st round. Invited to the second round to present.
-## Dataset
-
+<strong>Members</strong>: Vu Le The Anh, Pham Hoang Nhat, Nguyen Ho Thang Long. Mentors of [PiMA](https://www.pimavn.com/).
+<br />
+<strong>Final Result</strong>: 8th place in the 1st round. Invited to the 2nd round to present.
+<br />
+## Dataset:
 Train: https://drive.google.com/drive/folders/1TeguARxkKENBuEbBsZup1ZPt7Z-rBoeQ
 
 Test: https://drive.google.com/drive/folders/1UU1H3dwPKS6CjviROqoW9RXpGo6hms6Z
+
+## References:
+
+[1] https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html
+<br />
+[2] https://www.kaggle.com/ejlok1/audio-emotion-part-6-2d-cnn-66-accuracy
+<br />
+[3] mixup: Beyond Empirical Risk Minimization
