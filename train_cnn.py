@@ -1,23 +1,23 @@
 from torch.utils.data import DataLoader, random_split
 from torch import nn
-from torchaudio.transforms import MFCC
+from torchaudio.transforms import MFCC, MelSpectrogram, Spectrogram
 from torchvision.transforms import Compose
 from nntoolbox.learner import SupervisedLearner
 from nntoolbox.callbacks import *
 from nntoolbox.metrics import *
-from torch.optim import Adam
+from torch.optim import *
 from src.utils import *
 from src.models import *
+import numpy as np
 
-print("Running Nhat's script")
-
-batch_size = 128
+batch_size = 32
 frequency = 16000
 lr = 0.001
 
 transform_train = Compose(
     [
-        # RandomCropCenter(45000),
+        # RandomCropCenter(40000),
+        # Noise(),
         MFCC(sample_rate=frequency, n_mfcc=30),
         TimePad(216)
     ]
@@ -30,10 +30,15 @@ transform_val = Compose(
     ]
 )
 
-for i in range(2):
+run_val_acc = []
+for i in range(5):
     print('===== Run {} ===='.format(i))
-
-    model = ICModel()
+    
+    model = CNNModel()
+    # optimizer = Adam([
+    #             {'params': model.extractor.parameters(), 'lr': lr / 2},
+    #             {'params': model.head.parameters(), 'lr': lr}
+    #         ])
     optimizer = Adam(model.parameters(), lr=lr)
 
     train_val_dataset = ERCDataRaw("data/", True)
@@ -57,8 +62,8 @@ for i in range(2):
         ToDeviceCallback(),
         LossLogger(),
         ModelCheckpoint(learner=learner, filepath="weights/model_{}.pt".format(i), monitor='accuracy', mode='max'),
-        ReduceLROnPlateauCB(optimizer, patience=7, factor=0.5),
         ConfusionMatrixCB(),
+        ReduceLROnPlateauCB(optimizer, patience=5, factor=0.5),
         Tensorboard()
     ]
 
@@ -68,8 +73,11 @@ for i in range(2):
     }
 
     final = learner.learn(
-        n_epoch=100,
+        n_epoch=80,
         callbacks=callbacks,
         metrics=metrics,
         final_metric='accuracy'
     )
+
+    run_val_acc.append(final)
+np.array(run_val_acc).tofile('weights/val_acc.dat')
