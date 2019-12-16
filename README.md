@@ -1,8 +1,9 @@
 # PiMA team's code for ERC Contest
 <p align="center">
-<img src="original logo (with background).png" alt="styled" width="128" /></p>
+<img src="original logo (with background).png" alt="styled" width="128" />
+</p>
 <strong>Members</strong>: Vu Le The Anh, Pham Hoang Nhat, Nguyen Ho Thang Long. Mentors of [PiMA](https://www.pimavn.com/).
-<br />
+
 <strong>Final Result</strong>: 8th place in the 1st round. Invited to the 2nd round to present.
 
 ## Dataset:
