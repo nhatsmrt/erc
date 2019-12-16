@@ -2,7 +2,7 @@
 <p align="center">
 <img src="original logo (with background).png" alt="styled" width="128" />
 </p>
-<strong>Members</strong>: Vu Le The Anh, Pham Hoang Nhat, Nguyen Ho Thang Long. Mentors of [PiMA](https://www.pimavn.com/) 
+<strong>Members</strong>: Vu Le The Anh, Pham Hoang Nhat, Nguyen Ho Thang Long. Mentors of [PiMA](https://www.pimavn.com) 
 
 <strong>Final Result</strong>: 8th place in the 1st round. Invited to the 2nd round to present.
 
