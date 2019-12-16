@@ -3,7 +3,7 @@
   
 <a href="https://www.pimavn.com">  
   
-  <img src="original logo (with text)_01.png" alt="PiMA"  />
+  <img src="original logo (with text)_01.png" alt="PiMA" width="700"  />
 </a>
   
 </p>
