@@ -1,6 +1,10 @@
 # PiMA team's code for ERC Contest
 <p align="center">
-<img src="original logo (with background).png" alt="styled" width="128" />
+  
+<a href="https://www.pimavn.com">  
+  <img src="original logo (with background).png" alt="styled" width="128" />
+</a>
+  
 </p>
 <strong>Members</strong>: Vu Le The Anh, Pham Hoang Nhat, Nguyen Ho Thang Long. Mentors of PiMA: https://www.pimavn.com
 
