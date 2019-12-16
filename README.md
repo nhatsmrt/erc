@@ -5,7 +5,12 @@
   
   <img src="original logo (with text)_01.png" alt="PiMA" width="700"  />
 </a>
-  
+
+</p>
+<a href="https://colab.research.google.com/github/nhatsmrt/erc/ERC.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
 </p>
 <strong>Members</strong>: Vu Le The Anh, Pham Hoang Nhat, Nguyen Ho Thang Long. Mentors of 
 <a href="https://www.pimavn.com">
