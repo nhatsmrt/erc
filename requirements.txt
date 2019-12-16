@@ -1,9 +1,9 @@
-
 torch
 torchvision
 torchaudio
 torchgpipe
 pretrainedmodels
+nn-toolbox==0.0.92
 
 
 imgaug
