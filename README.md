@@ -7,6 +7,9 @@
   
 </p>
 <strong>Members</strong>: Vu Le The Anh, Pham Hoang Nhat, Nguyen Ho Thang Long. Mentors of PiMA: https://www.pimavn.com
+<a href="https://www.pimavn.com">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="PiMA"/>
+</a>
 
 <strong>Final Result</strong>: 8th place in the 1st round. Invited to the 2nd round to present.
 
